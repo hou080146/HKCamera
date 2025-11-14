@@ -3,13 +3,12 @@
   hikcamera.cpp
   main.cpp
   mainwindow.cpp
-g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 hikcamera.cpp)
 g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 cameraThread.cpp)
+g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 hikcamera.cpp)
 g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 main.cpp)
 g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 mainwindow.cpp)
-f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 hikcamera.cpp)
 f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 cameraThread.cpp)
-f:\hmy\mainwindow\mainwindow\hikcamera.cpp(181): warning C4067: 预处理器指令后有意外标记 - 应输入换行符
+f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 hikcamera.cpp)
 f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 mainwindow.cpp)
 f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 main.cpp)
   moc_cameraThread.cpp
@@ -18,7 +17,7 @@ f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包�
 g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 x64\Debug\moc\moc_hikcamera.cpp)
 g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 x64\Debug\moc\moc_cameraThread.cpp)
 g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 x64\Debug\moc\moc_mainwindow.cpp)
-f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 x64\Debug\moc\moc_cameraThread.cpp)
 f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 x64\Debug\moc\moc_hikcamera.cpp)
+f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 x64\Debug\moc\moc_cameraThread.cpp)
 f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 x64\Debug\moc\moc_mainwindow.cpp)
   mainwindow.vcxproj -> F:\hmy\mainwindow\x64\Debug\mainwindow.exe

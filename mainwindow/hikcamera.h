@@ -6,7 +6,8 @@
 #include <QReadWriteLock> 
 #include <QMap>
 #include "plaympeg4.h"
-
+#include <QTime>
+#include <atomic>
 
 class HikCamera : public QObject
 {
@@ -23,6 +24,8 @@ public:
 signals:
     void errorOccurred(const QString& error);
     void frameUpdated(const QImage& frame);
+private slots:
+    void onFrameReady(const QImage& img);
 
 private:
     static void CALLBACK DecodeCallback(long nPort, char* pBuf, long nSize,
@@ -35,7 +38,7 @@ private:
     //static QMutex s_mapMutex;
     static QReadWriteLock s_mapLock;  // Ê¹ÓÃ QReadWriteLock Ìæ»» QMutex
 
-    
+    std::atomic<qint64> m_lastEmitMs{ 0 };
     int m_frameInterval = 32;
 
     LONG m_userId = -1;

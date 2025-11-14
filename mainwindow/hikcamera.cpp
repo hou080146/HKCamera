@@ -162,67 +162,46 @@ void CALLBACK HikCamera::RealDataCallback(LONG, DWORD dwDataType,
 void CALLBACK HikCamera::DecodeCallback(long nPort, char* pBuf, long nSize,
     FRAME_INFO* pFrameInfo, long, long)
 {
-    HikCamera* camera = nullptr;
+    // 1) 从静态映射表查找 camera 实例
+    s_mapLock.lockForRead();
+    HikCamera* camera = s_portMap.value(nPort, nullptr);
+    s_mapLock.unlock();
+    if (!camera) return;
 
-    {
-        //QMutexLocker mapLocker(&s_mapMutex);
-        s_mapLock.lockForWrite();
-        camera = s_portMap.value(nPort, nullptr); // 通过端口查找实例
-        s_mapLock.unlock();
-    }
-    //11.检查camera对象有效性
-    if (!camera) {
-        qDebug() << "[错误] DecodeCallback: camera 指针无效";
-        return;
-    }
-    else {
-        qDebug() << "【DecodeCallback】camera 指针:" << camera;
-    }
-#if 0:
-    QMutexLocker locker(&camera->m_mutex);
-    if (camera->m_playPort == -1) {
-        qDebug() << "[错误] DecodeCallback: m_playPort 已释放";
-        return;
-    }
-#endif
+    // 2) 仅处理 YV12 数据
+    if (pFrameInfo->nType != T_YV12) return;
 
-    // 锁内仅检查状态
-    {
-        QMutexLocker locker(&camera->m_mutex);
-        if (camera->m_playPort == -1) return;
-    }
+    int w = pFrameInfo->nWidth;
+    int h = pFrameInfo->nHeight;
 
-    //12.YUV转BGR（OpenCV）
-    if (pFrameInfo->nType == T_YV12) {
-        qDebug() << "pFrameInfo->nType == T_YV12";
-        if (!camera) return;
+    // 3) YUV → RGB（OpenCV）
+    cv::Mat yuv(h + h / 2, w, CV_8UC1, (uchar*)pBuf);
+    cv::Mat rgb;
+    cv::cvtColor(yuv, rgb, cv::COLOR_YUV2RGB_YV12);
 
-        cv::Mat yuvMat(pFrameInfo->nHeight + pFrameInfo->nHeight / 2,
-            pFrameInfo->nWidth, CV_8UC1, (uchar*)pBuf);
-        cv::Mat bgrMat;
-        cv::cvtColor(yuvMat, bgrMat, cv::COLOR_YUV2BGR_YV12);
+    // 4) 复制到 QImage（必须 deep copy，否则 rgb 会释放）
+    QImage img(rgb.data, w, h, rgb.step, QImage::Format_RGB888);
+    QImage deepCopy = img.copy();  // 必须复制
 
-        // 13. 生成 QImage（Qt5兼容写法）
-        // 先将BGR转为RGB，再用Format_RGB888构造
-        cv::Mat rgbMat;
-        cv::cvtColor(bgrMat, rgbMat, cv::COLOR_BGR2RGB);
-        QImage img(rgbMat.data, rgbMat.cols, rgbMat.rows, rgbMat.step, QImage::Format_RGB888);
+    // 5) 限制频率（无锁原子变量）
+    qint64 now = QDateTime::currentMSecsSinceEpoch();
+    qint64 last = camera->m_lastEmitMs.load(std::memory_order_relaxed);
 
+    if (now - last < camera->m_frameInterval) return;
+    camera->m_lastEmitMs.store(now, std::memory_order_relaxed);
 
+    // 6) 用 Qt::QueuedConnection 把图像发送给 Qt 主线程
+    QMetaObject::invokeMethod(
+        camera,
+        "onFrameReady",
+        Qt::QueuedConnection,
+        Q_ARG(QImage, deepCopy)
+    );
+}
 
-        //14.信号传递到CameraThread::newFrame
-        //  限制信号发送频率
-        // 限制信号频率
-    
-        emit camera->frameUpdated(img.copy());
-
-
-        // // 调试保存前5帧
-        // static int saveCount = 0;
-        // if(saveCount++ < 5){
-        //     cv::imwrite(QString("debug_%1.jpg").arg(saveCount).toStdString(), bgrMat);
-        // }
-    }
+void HikCamera::onFrameReady(const QImage &img)
+{
+    emit frameUpdated(img);
 }
 
 
