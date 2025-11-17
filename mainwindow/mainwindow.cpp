@@ -1,6 +1,9 @@
+//指定文件的编码为UTF-8
+#pragma execution_character_set("utf-8")
 #include "mainwindow.h"
 //#include "videowidget.h"
 #include "GLVideoWidget.h"
+
 mainwindow::mainwindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::mainwindowClass)
 {
@@ -8,19 +11,23 @@ mainwindow::mainwindow(QWidget *parent)
 
     // 初始化摄像头线程
     // 假设你希望窗口固定为 1280x720
-    setFixedSize(1280, 720);
+    //setFixedSize(1280, 720);
     //ui->Video->setFixedSize(640, 480);
+
     m_cameraThread = new CameraThread(this);
     connect(m_cameraThread, &CameraThread::errorMessage, this, &mainwindow::handleError);
     // 用 OpenGL 控件替换 UI 上的 Video
     GLVideoWidget *glWidget = new GLVideoWidget(this);
+
     ui->videoLayout->addWidget(glWidget);
 
     connect(m_cameraThread, &CameraThread::newFrame,
         glWidget, &GLVideoWidget::updateFrame);
     //16（2）.触发重绘
     //connect(m_cameraThread, &CameraThread::newFrame, ui->Video, &VideoWidget::updateFrame);
-
+    yolo = new YoloProcessor(this);
+    yolo->loadModel("yolov5s_1920x1088.onnx", true);  // 根据你的模型路径修改
+    //yolo->setClassNames({ "person", "bicycle", "car", "motorcycle", "bus", "truck" });
     // 启动摄像头
     m_cameraThread->initialize("192.168.1.64", "admin", "ck145236"); 
     m_cameraThread->start();

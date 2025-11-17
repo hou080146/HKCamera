@@ -4,6 +4,7 @@
 #include "ui_mainwindow.h"
 #include "videowidget.h"
 #include "camerathread.h"
+#include "YoloProcessor.h"
 
 class mainwindow : public QMainWindow
 {
@@ -18,5 +19,6 @@ private slots:
     // void updateStatus();
 private:
     Ui::mainwindowClass *ui;
+    YoloProcessor *yolo;
     CameraThread* m_cameraThread;
 };

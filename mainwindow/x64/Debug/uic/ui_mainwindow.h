@@ -18,7 +18,9 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTabWidget>
 #include <QtWidgets/QToolBar>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -27,9 +29,13 @@ class Ui_mainwindowClass
 {
 public:
     QWidget *centralWidget;
+    QVBoxLayout *verticalLayout;
     QWidget *videoWidgetContainer;
     QGridLayout *gridLayout;
     QGridLayout *videoLayout;
+    QTabWidget *tabWidget;
+    QWidget *tab;
+    QWidget *tab_2;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -38,12 +44,18 @@ public:
     {
         if (mainwindowClass->objectName().isEmpty())
             mainwindowClass->setObjectName(QStringLiteral("mainwindowClass"));
-        mainwindowClass->resize(909, 775);
+        mainwindowClass->resize(1298, 951);
+        mainwindowClass->setMaximumSize(QSize(1298, 951));
         centralWidget = new QWidget(mainwindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
+        verticalLayout = new QVBoxLayout(centralWidget);
+        verticalLayout->setSpacing(6);
+        verticalLayout->setContentsMargins(11, 11, 11, 11);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         videoWidgetContainer = new QWidget(centralWidget);
         videoWidgetContainer->setObjectName(QStringLiteral("videoWidgetContainer"));
-        videoWidgetContainer->setGeometry(QRect(50, 100, 681, 501));
+        videoWidgetContainer->setMinimumSize(QSize(1280, 720));
+        videoWidgetContainer->setMaximumSize(QSize(1280, 720));
         gridLayout = new QGridLayout(videoWidgetContainer);
         gridLayout->setSpacing(6);
         gridLayout->setContentsMargins(11, 11, 11, 11);
@@ -54,10 +66,25 @@ public:
 
         gridLayout->addLayout(videoLayout, 0, 0, 1, 1);
 
+
+        verticalLayout->addWidget(videoWidgetContainer);
+
+        tabWidget = new QTabWidget(centralWidget);
+        tabWidget->setObjectName(QStringLiteral("tabWidget"));
+        tabWidget->setMinimumSize(QSize(0, 150));
+        tab = new QWidget();
+        tab->setObjectName(QStringLiteral("tab"));
+        tabWidget->addTab(tab, QString());
+        tab_2 = new QWidget();
+        tab_2->setObjectName(QStringLiteral("tab_2"));
+        tabWidget->addTab(tab_2, QString());
+
+        verticalLayout->addWidget(tabWidget);
+
         mainwindowClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(mainwindowClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 909, 23));
+        menuBar->setGeometry(QRect(0, 0, 1298, 23));
         mainwindowClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(mainwindowClass);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -74,6 +101,8 @@ public:
     void retranslateUi(QMainWindow *mainwindowClass)
     {
         mainwindowClass->setWindowTitle(QApplication::translate("mainwindowClass", "mainwindow", Q_NULLPTR));
+        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("mainwindowClass", "Tab 1", Q_NULLPTR));
+        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("mainwindowClass", "Tab 2", Q_NULLPTR));
     } // retranslateUi
 
 };

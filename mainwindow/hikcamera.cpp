@@ -1,8 +1,12 @@
+//指定文件的编码为UTF-8
+#pragma execution_character_set("utf-8")
+
 #include "hikcamera.h"
 
 #include <QDebug>
 #include <QImage>
 #include <QMutex>
+#include <QThread>
 
 // 初始化静态成员
 QMap<LONG, HikCamera*> HikCamera::s_portMap;
@@ -18,6 +22,7 @@ HikCamera::HikCamera(QObject *parent) : QObject(parent)
     else {
         qDebug() << "sdk初始化出错，错误提示：" << NET_DVR_GetLastError;
     }
+    QThread::msleep(3000);  // 给 PlayM4 DLL 时间初始化
     NET_DVR_SetConnectTime(2000, 1);
     NET_DVR_SetReconnect(10000, true);
     
@@ -85,6 +90,8 @@ bool HikCamera::init(const QString &ip, const QString &user, const QString &pwd,
 
 
     //6.解码初始化
+    //海康PlayM4（Playback SDK）存在历史遗留问题（海康官方论坛有人反馈过）
+    //debug模式下概率SDK内部线程不安全导致资源访问冲突
     if (!PlayM4_GetPort(&m_playPort)) {
         emit errorOccurred("获取播放端口失败");
         return false;
@@ -137,14 +144,14 @@ void HikCamera::startPreview()
 void CALLBACK HikCamera::RealDataCallback(LONG, DWORD dwDataType,
     BYTE* pBuffer, DWORD dwBufSize, void* pUser)
 {
-    qDebug() << "【RealDataCallback】pUser值：" << pUser;
+    //qDebug() << "【RealDataCallback】pUser值：" << pUser;
 
     HikCamera* camera = reinterpret_cast<HikCamera*>(pUser);
     if (camera && dwDataType == NET_DVR_STREAMDATA) {
-        qDebug() << "[RealDataCallback]接受到的视频流数据不为空且满足格式要求！";
+        //qDebug() << "[RealDataCallback]接受到的视频流数据不为空且满足格式要求！";
     }
     if (!camera || dwDataType != NET_DVR_STREAMDATA) return;
-    qDebug() << "[RealDataCallback]pBuffer地址为：" << pBuffer << " 大小为：" << dwBufSize;
+    //qDebug() << "[RealDataCallback]pBuffer地址为：" << pBuffer << " 大小为：" << dwBufSize;
     QMutexLocker locker(&camera->m_mutex); // 加锁
     if (camera->m_playPort == -1) {
         qDebug() << "资源已释放";
@@ -155,7 +162,7 @@ void CALLBACK HikCamera::RealDataCallback(LONG, DWORD dwDataType,
     if (dwBufSize > 0) {
         PlayM4_InputData(camera->m_playPort, pBuffer, dwBufSize);
     }
-    qDebug() << "[RealDataCallback] m_playPort:" << camera->m_playPort;
+    //qDebug() << "[RealDataCallback] m_playPort:" << camera->m_playPort;
 }
 
 // 解码回调:将YUV数据转换为BGR格式，并生成QImage发送frameUpdated信号

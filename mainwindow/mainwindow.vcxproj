@@ -92,6 +92,7 @@
   <ItemGroup>
     <ClCompile Include="GLVideoWidget.cpp" />
     <ClCompile Include="videowidget.cpp" />
+    <ClCompile Include="YoloProcessor.cpp" />
     <QtRcc Include="mainwindow.qrc" />
     <QtUic Include="mainwindow.ui" />
     <QtMoc Include="mainwindow.h" />
@@ -104,6 +105,7 @@
     <QtMoc Include="cameraThread.h" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="YoloProcessor.h" />
     <QtMoc Include="GLVideoWidget.h" />
     <ClInclude Include="HCNetSDK.h" />
     <QtMoc Include="hikcamera.h" />

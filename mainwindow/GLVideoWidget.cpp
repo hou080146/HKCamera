@@ -4,7 +4,8 @@
 GLVideoWidget::GLVideoWidget(QWidget *parent)
     : QOpenGLWidget(parent), m_textureId(0)
 {
-    setFixedSize(640, 480);  // 固定大小
+    //setFixedSize(1280, 720);   // 固定为 720p 显示窗口（适合 1080p 视频输入）
+
 }
 
 GLVideoWidget::~GLVideoWidget()

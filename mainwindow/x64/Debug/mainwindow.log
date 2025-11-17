@@ -1,4 +1,14 @@
-﻿  mainwindow.cpp
+﻿  moc mainwindow.h
+  hikcamera.cpp
+  main.cpp
+  mainwindow.cpp
+g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 hikcamera.cpp)
+g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 mainwindow.cpp)
+g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 main.cpp)
+f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 hikcamera.cpp)
+f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 mainwindow.cpp)
+f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 main.cpp)
+  moc_mainwindow.cpp
 g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符
   mainwindow.vcxproj -> F:\hmy\mainwindow\x64\Debug\mainwindow.exe
