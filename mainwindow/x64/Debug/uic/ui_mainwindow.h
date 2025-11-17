@@ -13,13 +13,13 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
-#include "videowidget.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -27,7 +27,9 @@ class Ui_mainwindowClass
 {
 public:
     QWidget *centralWidget;
-    VideoWidget *Video;
+    QWidget *videoWidgetContainer;
+    QGridLayout *gridLayout;
+    QGridLayout *videoLayout;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -36,16 +38,26 @@ public:
     {
         if (mainwindowClass->objectName().isEmpty())
             mainwindowClass->setObjectName(QStringLiteral("mainwindowClass"));
-        mainwindowClass->resize(802, 610);
+        mainwindowClass->resize(909, 775);
         centralWidget = new QWidget(mainwindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        Video = new VideoWidget(centralWidget);
-        Video->setObjectName(QStringLiteral("Video"));
-        Video->setGeometry(QRect(0, 0, 621, 461));
+        videoWidgetContainer = new QWidget(centralWidget);
+        videoWidgetContainer->setObjectName(QStringLiteral("videoWidgetContainer"));
+        videoWidgetContainer->setGeometry(QRect(50, 100, 681, 501));
+        gridLayout = new QGridLayout(videoWidgetContainer);
+        gridLayout->setSpacing(6);
+        gridLayout->setContentsMargins(11, 11, 11, 11);
+        gridLayout->setObjectName(QStringLiteral("gridLayout"));
+        videoLayout = new QGridLayout();
+        videoLayout->setSpacing(6);
+        videoLayout->setObjectName(QStringLiteral("videoLayout"));
+
+        gridLayout->addLayout(videoLayout, 0, 0, 1, 1);
+
         mainwindowClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(mainwindowClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 802, 23));
+        menuBar->setGeometry(QRect(0, 0, 909, 23));
         mainwindowClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(mainwindowClass);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));

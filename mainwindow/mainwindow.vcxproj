@@ -30,7 +30,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>5.9chart</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;opengl;gui;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
@@ -61,7 +61,7 @@
       <AdditionalIncludeDirectories>G:\hmy\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>PlayCtrl.lib;HCNetSDK.lib;opencv_world4120d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;PlayCtrl.lib;HCNetSDK.lib;opencv_world4120d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>I:\hmy\HK\CH-HCNetSDKV6.1.9.48_build20230410_win64_20251013160408\CH-HCNetSDKV6.1.9.48_build20230410_win64\lib;G:\hmy\opencv\build\x64\vc16\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -90,6 +90,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GLVideoWidget.cpp" />
     <ClCompile Include="videowidget.cpp" />
     <QtRcc Include="mainwindow.qrc" />
     <QtUic Include="mainwindow.ui" />
@@ -103,6 +104,7 @@
     <QtMoc Include="cameraThread.h" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="GLVideoWidget.h" />
     <ClInclude Include="HCNetSDK.h" />
     <QtMoc Include="hikcamera.h" />
     <ClInclude Include="plaympeg4.h" />

@@ -22,6 +22,7 @@ private:
     //QPixmap m_currentFrame;
     //QMutex m_mutex;
     QAtomicPointer<QPixmap> m_frameAtomic; // 使用原子指针代替 mutex + m_currentFrame
-    QSize m_frameSize;
+    //QSize m_frameSize;
+    QSize m_lastSize;                       // 上一次控件尺寸，用于判断是否需要重新缩放
 };
 

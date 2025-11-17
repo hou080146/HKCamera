@@ -5,8 +5,10 @@
 
 VideoWidget::VideoWidget(QWidget *parent) : QWidget(parent)
 {
+    setFixedSize(640, 480);    // 设置固定大小
     setAttribute(Qt::WA_OpaquePaintEvent);
     m_frameAtomic.store(nullptr);
+
 }
 
 //15（2）.信号传递到VideoWidget::updateFrame 缩放图像到控件大小
@@ -31,11 +33,11 @@ void VideoWidget::updateFrame(const QImage& frame)
     if (frame.isNull()) return;
 
     // 1. 构造 QPixmap（耗时操作锁外）
-    QPixmap* newPixmap = new QPixmap(QPixmap::fromImage(frame.scaled(
-        size(), Qt::KeepAspectRatio, Qt::SmoothTransformation)));
-
+    QPixmap* newPixmap = new QPixmap(QPixmap::fromImage(frame.scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+    //QImage scaledImg = frame.scaled(size(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
     // 2. 原子交换，保证线程安全
     QPixmap* oldPixmap = m_frameAtomic.fetchAndStoreRelaxed(newPixmap);
+    //QPixmap* oldPixmap = m_frameAtomic.load();
     if (oldPixmap) delete oldPixmap;
 
     // 3. 触发 repaint

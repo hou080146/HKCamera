@@ -6,23 +6,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>802</width>
-    <height>610</height>
+    <width>909</width>
+    <height>775</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>mainwindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="VideoWidget" name="Video" native="true">
+   <widget class="QWidget" name="videoWidgetContainer" native="true">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>621</width>
-      <height>461</height>
+      <x>50</x>
+      <y>100</y>
+      <width>681</width>
+      <height>501</height>
      </rect>
     </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <layout class="QGridLayout" name="videoLayout"/>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -30,7 +35,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>802</width>
+     <width>909</width>
      <height>23</height>
     </rect>
    </property>
@@ -46,14 +51,6 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>VideoWidget</class>
-   <extends>QWidget</extends>
-   <header>videowidget.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="mainwindow.qrc"/>
  </resources>
