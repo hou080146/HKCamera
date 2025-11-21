@@ -2,6 +2,8 @@
 
 #include <QThread>
 #include "hikcamera.h"
+#include "YoloV5Detector.h"
+//#include "YoloProcessor.h"
 
 class CameraThread : public QThread
 {
@@ -16,16 +18,19 @@ public:
 
 signals:
     void errorMessage(const QString& msg);
-    void newFrame(const QImage& frame);
+    void frameReady(const QImage& image); // 发送给 UI 显示 (带框)
+    
 
 protected:
     void run() override;
 
 private:
     HikCamera* m_camera = nullptr;
+    YoloV5Detector* m_detector = nullptr; // 使用你的新类
     QString m_ip;
     QString m_user;
     QString m_pwd;
     int m_port;
     QMutex m_mutex;
+    bool m_stopFlag = false;
 };

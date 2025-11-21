@@ -1,14 +1,5 @@
-﻿  moc mainwindow.h
-  hikcamera.cpp
-  main.cpp
-  mainwindow.cpp
-g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 hikcamera.cpp)
-g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 mainwindow.cpp)
-g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 (编译源文件 main.cpp)
-f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 hikcamera.cpp)
-f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 mainwindow.cpp)
-f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符 (编译源文件 main.cpp)
-  moc_mainwindow.cpp
-g:\hmy\opencv\build\include\opencv2\imgcodecs.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-f:\hmy\mainwindow\mainwindow\hcnetsdk.h(41172): warning C4010: 单行注释包含行继续符
-  mainwindow.vcxproj -> F:\hmy\mainwindow\x64\Debug\mainwindow.exe
+﻿YoloV5Detector.obj : error LNK2019: 无法解析的外部符号 "void __cdecl cv::dnn::dnn4_v20211220::blobFromImage(class cv::debug_build_guard::_InputArray const &,class cv::debug_build_guard::_OutputArray const &,double,class cv::Size_<int> const &,class cv::Scalar_<double> const &,bool,bool,int)" (?blobFromImage@dnn4_v20211220@dnn@cv@@YAXAEBV_InputArray@debug_build_guard@3@AEBV_OutputArray@53@NAEBV?$Size_@H@3@AEBV?$Scalar_@N@3@_N4H@Z)，函数 "public: class std::vector<struct YoloV5Detector::Detection,class std::allocator<struct YoloV5Detector::Detection> > __cdecl YoloV5Detector::detect(class cv::Mat const &,float,float)" (?detect@YoloV5Detector@@QEAA?AV?$vector@UDetection@YoloV5Detector@@V?$allocator@UDetection@YoloV5Detector@@@std@@@std@@AEBVMat@cv@@MM@Z) 中引用了该符号
+cameraThread.obj : error LNK2019: 无法解析的外部符号 "void __cdecl cv::cvtColor(class cv::debug_build_guard::_InputArray const &,class cv::debug_build_guard::_OutputArray const &,int,int)" (?cvtColor@cv@@YAXAEBV_InputArray@debug_build_guard@1@AEBV_OutputArray@31@HH@Z)，函数 "protected: virtual void __cdecl CameraThread::run(void)" (?run@CameraThread@@MEAAXXZ) 中引用了该符号
+cameraThread.obj : error LNK2019: 无法解析的外部符号 "void __cdecl cv::rectangle(class cv::debug_build_guard::_InputOutputArray const &,class cv::Rect_<int>,class cv::Scalar_<double> const &,int,int,int)" (?rectangle@cv@@YAXAEBV_InputOutputArray@debug_build_guard@1@V?$Rect_@H@1@AEBV?$Scalar_@N@1@HHH@Z)，函数 "protected: virtual void __cdecl CameraThread::run(void)" (?run@CameraThread@@MEAAXXZ) 中引用了该符号
+hikcamera.obj : error LNK2019: 无法解析的外部符号 "public: void __cdecl cv::Mat::copyTo(class cv::debug_build_guard::_OutputArray const &)const " (?copyTo@Mat@cv@@QEBAXAEBV_OutputArray@debug_build_guard@2@@Z)，函数 "public: bool __cdecl HikCamera::getLatestFrame(class cv::Mat &)" (?getLatestFrame@HikCamera@@QEAA_NAEAVMat@cv@@@Z) 中引用了该符号
+F:\hmy\mainwindow\x64\Debug\mainwindow.exe : fatal error LNK1120: 4 个无法解析的外部命令

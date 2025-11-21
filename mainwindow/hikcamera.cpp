@@ -22,7 +22,7 @@ HikCamera::HikCamera(QObject *parent) : QObject(parent)
     else {
         qDebug() << "sdk初始化出错，错误提示：" << NET_DVR_GetLastError;
     }
-    QThread::msleep(3000);  // 给 PlayM4 DLL 时间初始化
+    //QThread::msleep(3000);  // 给 PlayM4 DLL 时间初始化
     NET_DVR_SetConnectTime(2000, 1);
     NET_DVR_SetReconnect(10000, true);
     
@@ -30,20 +30,14 @@ HikCamera::HikCamera(QObject *parent) : QObject(parent)
 
 HikCamera::~HikCamera()
 {
-    stopPreview();
-    QMutexLocker locker(&m_mutex);
-
-    // 析构时从映射表移除
-    {
-        //QMutexLocker mapLocker(&s_mapMutex);
-        //if (s_portMap.contains(m_playPort)) {
-        //    s_portMap.remove(m_playPort);
-        //}
+    if (m_playPort != -1) {
         s_mapLock.lockForWrite();
         s_portMap.remove(m_playPort);
         s_mapLock.unlock();
-
     }
+
+    // 2. 第二步：停止预览和播放
+    stopPreview();
 
     // 关闭播放端口
     if (m_playPort != -1) {
@@ -90,8 +84,8 @@ bool HikCamera::init(const QString &ip, const QString &user, const QString &pwd,
 
 
     //6.解码初始化
-    //海康PlayM4（Playback SDK）存在历史遗留问题（海康官方论坛有人反馈过）
-    //debug模式下概率SDK内部线程不安全导致资源访问冲突
+    //海康PlayM4（Playback SDK）存在历史遗留问题
+    //debug模式下SDK内部线程不安全概率导致资源访问冲突
     if (!PlayM4_GetPort(&m_playPort)) {
         emit errorOccurred("获取播放端口失败");
         return false;
@@ -106,7 +100,7 @@ bool HikCamera::init(const QString &ip, const QString &user, const QString &pwd,
     }
 
     if (!PlayM4_SetStreamOpenMode(m_playPort, STREAME_REALTIME) ||
-        !PlayM4_OpenStream(m_playPort, nullptr, 0, 1440 * 2560) ||
+        !PlayM4_OpenStream(m_playPort, nullptr, 0, 1920 * 1088 * 2) ||
         !PlayM4_SetDecCallBackExMend(m_playPort, DecodeCallback, 0, 0, 0) ||
         !PlayM4_Play(m_playPort, nullptr)) {
         emit errorOccurred("播放器初始化失败");
@@ -169,48 +163,66 @@ void CALLBACK HikCamera::RealDataCallback(LONG, DWORD dwDataType,
 void CALLBACK HikCamera::DecodeCallback(long nPort, char* pBuf, long nSize,
     FRAME_INFO* pFrameInfo, long, long)
 {
-    // 1) 从静态映射表查找 camera 实例
+    // 1. 查找实例
     s_mapLock.lockForRead();
     HikCamera* camera = s_portMap.value(nPort, nullptr);
     s_mapLock.unlock();
     if (!camera) return;
 
-    // 2) 仅处理 YV12 数据
+    // 2. 仅处理 YV12 (海康 SDK 默认输出)
     if (pFrameInfo->nType != T_YV12) return;
 
     int w = pFrameInfo->nWidth;
     int h = pFrameInfo->nHeight;
 
-    // 3) YUV → RGB（OpenCV）
-    cv::Mat yuv(h + h / 2, w, CV_8UC1, (uchar*)pBuf);
-    cv::Mat rgb;
-    cv::cvtColor(yuv, rgb, cv::COLOR_YUV2RGB_YV12);
+    // 3. 【关键】只做内存拷贝，不做耗时操作
+    // YV12 的大小是 w * h * 1.5
+    // 我们构建一个 cv::Mat 来 wrap 这块内存，然后 deep copy 到 m_latestYUV
+    // 注意：pBuf 是临时的，必须 clone
+    {
+        QMutexLocker locker(&camera->m_frameMutex);
 
-    // 4) 复制到 QImage（必须 deep copy，否则 rgb 会释放）
-    QImage img(rgb.data, w, h, rgb.step, QImage::Format_RGB888);
-    QImage deepCopy = img.copy();  // 必须复制
+        // 构造一个临时的 Mat 头指向 pBuf (不拷贝数据)
+        // YV12 在 OpenCV 中可以看作是高度为 h * 1.5 的单通道图
+        cv::Mat tempYUV(h + h / 2, w, CV_8UC1, (uchar*)pBuf);
 
-    // 5) 限制频率（无锁原子变量）
-    qint64 now = QDateTime::currentMSecsSinceEpoch();
-    qint64 last = camera->m_lastEmitMs.load(std::memory_order_relaxed);
+        // 拷贝到成员变量 (Deep Copy)
+        tempYUV.copyTo(camera->m_latestYUV);
 
-    if (now - last < camera->m_frameInterval) return;
-    camera->m_lastEmitMs.store(now, std::memory_order_relaxed);
+        camera->m_hasNewFrame.store(true, std::memory_order_release);
+    }
 
-    // 6) 用 Qt::QueuedConnection 把图像发送给 Qt 主线程
-    QMetaObject::invokeMethod(
-        camera,
-        "onFrameReady",
-        Qt::QueuedConnection,
-        Q_ARG(QImage, deepCopy)
-    );
+    // 结束！不发信号，不转 RGB，不做 QImage。耗时 < 1ms。
 }
-
+#if 0:
 void HikCamera::onFrameReady(const QImage &img)
 {
-    emit frameUpdated(img);
+    //if (m_yolo) {
+    //    m_yolo->detect(img);  // 异步调用 YOLO
+    //}
+    //else {
+        emit frameUpdated(img); // 如果没有 YOLO，直接发给显示
+    //}
 }
+#endif
 
+// 【新增】获取最新帧
+bool HikCamera::getLatestFrame(cv::Mat& outYUV)
+{
+    if (!m_hasNewFrame.load(std::memory_order_acquire)) return false;
+
+    QMutexLocker locker(&m_frameMutex);
+    if (m_latestYUV.empty()) return false;
+
+    // 拷贝出去供处理 (Deep Copy)
+    m_latestYUV.copyTo(outYUV);
+
+    // 标记已读取，避免重复处理同一帧（可选，看你是否需要丢帧策略）
+    // 如果希望尽量高帧率，可以设为 false
+    m_hasNewFrame.store(false, std::memory_order_release);
+
+    return true;
+}
 
 void HikCamera::stopPreview()
 {

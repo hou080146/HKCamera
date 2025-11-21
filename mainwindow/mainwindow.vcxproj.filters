@@ -46,13 +46,10 @@
     <ClCompile Include="hikcamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="videowidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GLVideoWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="YoloProcessor.cpp">
+    <ClCompile Include="YoloV5Detector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -63,13 +60,10 @@
     <QtMoc Include="hikcamera.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="videowidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="GLVideoWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="YoloProcessor.h">
+    <QtMoc Include="YoloV5Detector.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

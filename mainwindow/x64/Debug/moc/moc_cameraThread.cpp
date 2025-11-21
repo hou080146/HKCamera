@@ -22,7 +22,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_CameraThread_t {
     QByteArrayData data[6];
-    char stringdata0[46];
+    char stringdata0[48];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -35,12 +35,12 @@ QT_MOC_LITERAL(0, 0, 12), // "CameraThread"
 QT_MOC_LITERAL(1, 13, 12), // "errorMessage"
 QT_MOC_LITERAL(2, 26, 0), // ""
 QT_MOC_LITERAL(3, 27, 3), // "msg"
-QT_MOC_LITERAL(4, 31, 8), // "newFrame"
-QT_MOC_LITERAL(5, 40, 5) // "frame"
+QT_MOC_LITERAL(4, 31, 10), // "frameReady"
+QT_MOC_LITERAL(5, 42, 5) // "image"
 
     },
-    "CameraThread\0errorMessage\0\0msg\0newFrame\0"
-    "frame"
+    "CameraThread\0errorMessage\0\0msg\0"
+    "frameReady\0image"
 };
 #undef QT_MOC_LITERAL
 
@@ -75,7 +75,7 @@ void CameraThread::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->errorMessage((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 1: _t->newFrame((*reinterpret_cast< const QImage(*)>(_a[1]))); break;
+        case 1: _t->frameReady((*reinterpret_cast< const QImage(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -90,7 +90,7 @@ void CameraThread::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         }
         {
             typedef void (CameraThread::*_t)(const QImage & );
-            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&CameraThread::newFrame)) {
+            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&CameraThread::frameReady)) {
                 *result = 1;
                 return;
             }
@@ -142,7 +142,7 @@ void CameraThread::errorMessage(const QString & _t1)
 }
 
 // SIGNAL 1
-void CameraThread::newFrame(const QImage & _t1)
+void CameraThread::frameReady(const QImage & _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);

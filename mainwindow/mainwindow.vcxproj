@@ -18,11 +18,11 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
@@ -58,12 +58,21 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>G:\hmy\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\hmy\Opencv_Build\build\install\include;G:\hmy\onnxruntime-win-x64-gpu-1.14.1\onnxruntime-win-x64-gpu-1.14.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;PlayCtrl.lib;HCNetSDK.lib;opencv_world4120d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>I:\hmy\HK\CH-HCNetSDKV6.1.9.48_build20230410_win64_20251013160408\CH-HCNetSDKV6.1.9.48_build20230410_win64\lib;G:\hmy\opencv\build\x64\vc16\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>onnxruntime.lib;opengl32.lib;PlayCtrl.lib;HCNetSDK.lib;opencv_world455.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>G:\hmy\onnxruntime-win-x64-gpu-1.14.1\onnxruntime-win-x64-gpu-1.14.1\lib;I:\hmy\HK\CH-HCNetSDKV6.1.9.48_build20230410_win64_20251013160408\CH-HCNetSDKV6.1.9.48_build20230410_win64\lib;G:\hmy\Opencv_Build\build\install\x64\vc15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>opencv_world455.lib;onnxruntime.lib;opengl32.lib;PlayCtrl.lib;HCNetSDK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>G:\hmy\onnxruntime-win-x64-gpu-1.14.1\onnxruntime-win-x64-gpu-1.14.1\lib;I:\hmy\HK\CH-HCNetSDKV6.1.9.48_build20230410_win64_20251013160408\CH-HCNetSDKV6.1.9.48_build20230410_win64\lib;G:\hmy\Opencv_Build\build\install\x64\vc15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>G:\hmy\onnxruntime-win-x64-gpu-1.14.1\onnxruntime-win-x64-gpu-1.14.1\include;G:\hmy\Opencv_Build\build\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
@@ -91,8 +100,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GLVideoWidget.cpp" />
-    <ClCompile Include="videowidget.cpp" />
-    <ClCompile Include="YoloProcessor.cpp" />
+    <ClCompile Include="YoloV5Detector.cpp" />
     <QtRcc Include="mainwindow.qrc" />
     <QtUic Include="mainwindow.ui" />
     <QtMoc Include="mainwindow.h" />
@@ -105,12 +113,11 @@
     <QtMoc Include="cameraThread.h" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="YoloProcessor.h" />
+    <QtMoc Include="YoloV5Detector.h" />
     <QtMoc Include="GLVideoWidget.h" />
     <ClInclude Include="HCNetSDK.h" />
     <QtMoc Include="hikcamera.h" />
     <ClInclude Include="plaympeg4.h" />
-    <QtMoc Include="videowidget.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
