@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\ADMINI~1\AppData\Local\Temp\l2xyhnxr.rp1;D:\Qt\5.9chart\5.9\msvc2017_64\include;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtWidgets;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtGui;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtANGLE;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtCore;C:\Users\ADMINI~1\AppData\Local\Temp\l2xyhnxr.rp1;D:\Qt\5.9chart\5.9\msvc2017_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\hmy\mainwindow\mainwindow\x64\Release\qt\qmake;D:\Qt\5.9chart\5.9\msvc2017_64\include;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtWidgets;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtGui;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtANGLE;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtCore;F:\hmy\mainwindow\mainwindow\x64\Release\qt\qmake;D:\Qt\5.9chart\5.9\msvc2017_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>.\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -42,7 +42,7 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <ObjectFileName>.\</ObjectFileName>
       <Optimization>MaxSpeed</Optimization>
-      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;WIN32;WIN64;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <ProgramDataBaseFileName></ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -69,7 +69,7 @@
       <WarningLevel>0</WarningLevel>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;WIN32;WIN64;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

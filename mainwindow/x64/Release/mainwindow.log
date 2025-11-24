@@ -1,3 +1,5 @@
-﻿  cameraThread.cpp
+﻿   Qt/MSBuild: 3.4.1.0
+   Qt: 5.9.0
+  mainwindow.cpp
 F:\hmy\mainwindow\mainwindow\HCNetSDK.h(41172,1): warning C4010: 单行注释包含行继续符
   mainwindow.vcxproj -> F:\hmy\mainwindow\x64\Release\mainwindow.exe

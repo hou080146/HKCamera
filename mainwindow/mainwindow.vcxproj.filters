@@ -52,6 +52,12 @@
     <ClCompile Include="YoloV5Detector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AppConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="appinit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="cameraThread.h">
@@ -66,12 +72,18 @@
     <QtMoc Include="YoloV5Detector.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="appinit.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HCNetSDK.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="plaympeg4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AppConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

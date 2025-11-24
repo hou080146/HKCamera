@@ -54,6 +54,65 @@
        <attribute name="title">
         <string>Tab 1</string>
        </attribute>
+       <widget class="QLineEdit" name="lineEdit_ip1">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>20</y>
+          <width>171</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_ip1">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>20</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>IP_1:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_ip2">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>60</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>IP_1:</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_ip2">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>60</y>
+          <width>171</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btn_switchCamera">
+        <property name="geometry">
+         <rect>
+          <x>1100</x>
+          <y>40</y>
+          <width>71</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>切换相机</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">

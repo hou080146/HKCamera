@@ -71,7 +71,7 @@
       <AdditionalLibraryDirectories>G:\hmy\onnxruntime-win-x64-gpu-1.14.1\onnxruntime-win-x64-gpu-1.14.1\lib;I:\hmy\HK\CH-HCNetSDKV6.1.9.48_build20230410_win64_20251013160408\CH-HCNetSDKV6.1.9.48_build20230410_win64\lib;G:\hmy\Opencv_Build\build\install\x64\vc15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>G:\hmy\onnxruntime-win-x64-gpu-1.14.1\onnxruntime-win-x64-gpu-1.14.1\include;G:\hmy\Opencv_Build\build\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\GeneratedFiles\ui;G:\hmy\onnxruntime-win-x64-gpu-1.14.1\onnxruntime-win-x64-gpu-1.14.1\include;G:\hmy\Opencv_Build\build\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -99,6 +99,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AppConfig.cpp" />
+    <ClCompile Include="appinit.cpp" />
     <ClCompile Include="GLVideoWidget.cpp" />
     <ClCompile Include="YoloV5Detector.cpp" />
     <QtRcc Include="mainwindow.qrc" />
@@ -115,6 +117,8 @@
   <ItemGroup>
     <QtMoc Include="YoloV5Detector.h" />
     <QtMoc Include="GLVideoWidget.h" />
+    <ClInclude Include="AppConfig.h" />
+    <QtMoc Include="appinit.h" />
     <ClInclude Include="HCNetSDK.h" />
     <QtMoc Include="hikcamera.h" />
     <ClInclude Include="plaympeg4.h" />

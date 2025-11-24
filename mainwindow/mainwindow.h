@@ -21,10 +21,16 @@ protected:
 
 private slots:
     void handleError(const QString& msg);
-    // void updateStatus();
+    void saveConfig();
+    void switchCamear();
 private:
     Ui::mainwindowClass *ui;
-
     CameraThread* m_cameraThread = nullptr;
     GLVideoWidget* m_glWidget = nullptr;
+
+    QString IP_1 = "";
+    QString IP_2 = "";
+    bool flagCamear = false;
+
+    void init();
 };
