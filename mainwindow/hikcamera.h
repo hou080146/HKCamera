@@ -8,7 +8,7 @@
 #include "plaympeg4.h"
 #include <QTime>
 #include <atomic>
-//#include "YoloProcessor.h"
+
 
 class HikCamera : public QObject
 {
@@ -17,17 +17,19 @@ public:
     explicit HikCamera(QObject *parent = nullptr);
     ~HikCamera();
 
-    //YoloProcessor* m_yolo = nullptr; // YOLO 处理对象
-
     bool init(const QString& ip, const QString& user,
         const QString& pwd, int port = 8000);
     void startPreview();
     void stopPreview();
     bool getLatestFrame(cv::Mat& yuvFrame);
 
+    // 录像控制
+    //bool startRecord(const QString& savePath);
+    //void stopRecord();
+    //bool isRecording() const { return m_isRecording; }
+
 signals:
     void errorOccurred(const QString& error);
-    //void frameUpdated(const QImage& frame);
 //private slots:
 //    void onFrameReady(const QImage& img);
 
@@ -47,7 +49,8 @@ private:
 
     LONG m_userId = -1;
     LONG m_playHandle = -1;
-    LONG m_playPort = -1;
+    // 使用原子变量，避免在回调中加锁
+    std::atomic<LONG> m_playPort{ -1 };
     QMutex m_mutex;
     QString m_ip;
     QString m_user;
@@ -57,4 +60,6 @@ private:
     QMutex m_frameMutex;        // 专用的帧锁
     cv::Mat m_latestYUV;        // 存放 YV12 原始数据
     std::atomic<bool> m_hasNewFrame{ false }; // 标记是否有新帧
+
+    //std::atomic<bool> m_isRecording{ false }; // 录像状态标记
 };

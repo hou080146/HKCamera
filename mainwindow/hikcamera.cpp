@@ -15,13 +15,9 @@ QReadWriteLock  HikCamera::s_mapLock;
 //HikCamera构造函数
 HikCamera::HikCamera(QObject *parent) : QObject(parent)
 {
+    //由于需要支持相机线程启停，将SDK初始化移到mainwindow构造中
     /*NET_DVR_Init();*/        //3.调用NET_DVR_Init()
-    if (NET_DVR_Init()) {
-        qDebug() << "[NET_DVR_Init]sdk初始化成功";
-    }
-    else {
-        qDebug() << "sdk初始化出错，错误提示：" << NET_DVR_GetLastError;
-    }
+    
     //QThread::msleep(3000);  // 给 PlayM4 DLL 时间初始化
     NET_DVR_SetConnectTime(2000, 1);
     NET_DVR_SetReconnect(10000, true);
@@ -30,6 +26,7 @@ HikCamera::HikCamera(QObject *parent) : QObject(parent)
 
 HikCamera::~HikCamera()
 {
+    LONG currentPort = m_playPort.load();
     if (m_playPort != -1) {
         s_mapLock.lockForWrite();
         s_portMap.remove(m_playPort);
@@ -52,7 +49,7 @@ HikCamera::~HikCamera()
         NET_DVR_Logout(m_userId);
         m_userId = -1;
     }
-    NET_DVR_Cleanup();
+    //NET_DVR_Cleanup(); 由于要支持反复启停线程，防止单线程清理全局资源
 }
 
 //4.sdk初始化，调用信号连接：errorMessage/newFrame
@@ -86,21 +83,21 @@ bool HikCamera::init(const QString &ip, const QString &user, const QString &pwd,
     //6.解码初始化
     //海康PlayM4（Playback SDK）存在历史遗留问题
     //debug模式下SDK内部线程不安全概率导致资源访问冲突
-    if (!PlayM4_GetPort(&m_playPort)) {
+    // 获取端口
+    LONG portNum = -1;
+    if (!PlayM4_GetPort(&portNum)) {
         emit errorOccurred("获取播放端口失败");
         return false;
     }
-    qDebug() << "[PlayM4_GetPort] 解码端口获取m_playPort为：" << m_playPort;
+    m_playPort.store(portNum); // 原子存储
 
-    {
-        //QMutexLocker mapLocker(&s_mapMutex);
-        s_mapLock.lockForWrite();
-        s_portMap[m_playPort] = this;
-        s_mapLock.unlock();
-    }
-
+    // 注册到 map
+    s_mapLock.lockForWrite();
+    s_portMap[portNum] = this;
+    s_mapLock.unlock();
+    DWORD dwBufSize = 10 * 1024 * 1024;
     if (!PlayM4_SetStreamOpenMode(m_playPort, STREAME_REALTIME) ||
-        !PlayM4_OpenStream(m_playPort, nullptr, 0, 1920 * 1088 * 2) ||
+        !PlayM4_OpenStream(m_playPort, nullptr, 0, dwBufSize) ||
         !PlayM4_SetDecCallBackExMend(m_playPort, DecodeCallback, 0, 0, 0) ||
         !PlayM4_Play(m_playPort, nullptr)) {
         emit errorOccurred("播放器初始化失败");
@@ -119,6 +116,7 @@ bool HikCamera::init(const QString &ip, const QString &user, const QString &pwd,
 void HikCamera::startPreview()
 {
     QMutexLocker locker(&m_mutex);
+    if (m_playHandle != -1) return; // 防止重复开启
     NET_DVR_PREVIEWINFO previewInfo = { 0 };
     previewInfo.lChannel = 1;
     previewInfo.dwStreamType = 0;
@@ -139,24 +137,29 @@ void CALLBACK HikCamera::RealDataCallback(LONG, DWORD dwDataType,
     BYTE* pBuffer, DWORD dwBufSize, void* pUser)
 {
     //qDebug() << "【RealDataCallback】pUser值：" << pUser;
-
     HikCamera* camera = reinterpret_cast<HikCamera*>(pUser);
+    
     if (camera && dwDataType == NET_DVR_STREAMDATA) {
         //qDebug() << "[RealDataCallback]接受到的视频流数据不为空且满足格式要求！";
     }
     if (!camera || dwDataType != NET_DVR_STREAMDATA) return;
     //qDebug() << "[RealDataCallback]pBuffer地址为：" << pBuffer << " 大小为：" << dwBufSize;
-    QMutexLocker locker(&camera->m_mutex); // 加锁
-    if (camera->m_playPort == -1) {
-        qDebug() << "资源已释放";
-        return;
-    }
 
-    //10.收到视频流数据,发送到解码回调DecodeCallback
-    if (dwBufSize > 0) {
-        PlayM4_InputData(camera->m_playPort, pBuffer, dwBufSize);
+    LONG port = camera->m_playPort.load(std::memory_order_relaxed);
+
+    if (port != -1 && dwBufSize > 0) {
+        if (!PlayM4_InputData(port, pBuffer, dwBufSize)) {
+            // 只打印一次错误，防止刷屏
+            static int errCount = 0;
+            if (errCount++ % 100 == 0) {
+                DWORD err = PlayM4_GetLastError(port);
+                //qDebug() << "[PlayM4 Error] InputData failed! Error Code:" << err<< " BufSize:" << dwBufSize;
+                emit camera->errorOccurred(QString("RealDataCallback Error Code %1").arg(err));
+                // 如果缓冲区溢出 (错误码通常是 11)，可以尝试重置缓冲区（慎用，会花屏一下）
+                // if (err == 11) PlayM4_ResetSourceBuffer(port);
+            }
+        }
     }
-    //qDebug() << "[RealDataCallback] m_playPort:" << camera->m_playPort;
 }
 
 // 解码回调:将YUV数据转换为BGR格式，并生成QImage发送frameUpdated信号
@@ -194,17 +197,6 @@ void CALLBACK HikCamera::DecodeCallback(long nPort, char* pBuf, long nSize,
 
     // 结束！不发信号，不转 RGB，不做 QImage。耗时 < 1ms。
 }
-#if 0:
-void HikCamera::onFrameReady(const QImage &img)
-{
-    //if (m_yolo) {
-    //    m_yolo->detect(img);  // 异步调用 YOLO
-    //}
-    //else {
-        emit frameUpdated(img); // 如果没有 YOLO，直接发给显示
-    //}
-}
-#endif
 
 // 【新增】获取最新帧
 bool HikCamera::getLatestFrame(cv::Mat& outYUV)
@@ -226,9 +218,60 @@ bool HikCamera::getLatestFrame(cv::Mat& outYUV)
 
 void HikCamera::stopPreview()
 {
+
+    // 如果正在录像，先停止
+    //if (m_isRecording.load()) {
+     //   stopRecord();
+    //}
     if (m_playHandle != -1) {
         NET_DVR_StopRealPlay(m_playHandle);
         m_playHandle = -1;
         qDebug() << "[调试] 停止实时预览";
     }
 }
+
+/*
+//开始录像
+bool HikCamera::startRecord(const QString& savePath)
+{
+    QMutexLocker locker(&m_mutex);
+
+    if (m_playHandle == -1) {
+        qDebug() << "错误：预览未开启，无法录像";
+        return false;
+    }
+
+    if (m_isRecording) return true; // 已经在录了
+
+    QByteArray pathBytes = savePath.toLocal8Bit();
+
+    // 调用 SDK
+    if (!NET_DVR_SaveRealData(m_playHandle, pathBytes.data())) {
+        qDebug() << "录像失败，错误码：" << NET_DVR_GetLastError();
+        return false;
+    }
+
+    // 强制关键帧
+    NET_DVR_MakeKeyFrame(m_userId, 1);
+
+    m_isRecording.store(true);
+    qDebug() << "开始录像：" << savePath;
+    return true;
+}
+
+// 停止录像
+void HikCamera::stopRecord()
+{
+    QMutexLocker locker(&m_mutex);
+
+    if (!m_isRecording) return;
+
+    if (!NET_DVR_StopSaveRealData(m_playHandle)) {
+        qDebug() << "停止录像失败，错误码：" << NET_DVR_GetLastError();
+    }
+    else {
+        qDebug() << "录像停止";
+    }
+    m_isRecording.store(false);
+}
+*/

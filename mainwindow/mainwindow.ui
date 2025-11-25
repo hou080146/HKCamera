@@ -50,74 +50,106 @@
         <height>150</height>
        </size>
       </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>Tab 1</string>
+        <string>功能栏</string>
        </attribute>
-       <widget class="QLineEdit" name="lineEdit_ip1">
-        <property name="geometry">
-         <rect>
-          <x>70</x>
-          <y>20</y>
-          <width>171</width>
-          <height>20</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_ip1">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>20</y>
-          <width>54</width>
-          <height>12</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>IP_1:</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_ip2">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>60</y>
-          <width>54</width>
-          <height>12</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>IP_1:</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="lineEdit_ip2">
-        <property name="geometry">
-         <rect>
-          <x>70</x>
-          <y>60</y>
-          <width>171</width>
-          <height>20</height>
-         </rect>
-        </property>
-       </widget>
        <widget class="QPushButton" name="btn_switchCamera">
         <property name="geometry">
          <rect>
-          <x>1100</x>
-          <y>40</y>
+          <x>280</x>
+          <y>30</y>
           <width>71</width>
-          <height>31</height>
+          <height>61</height>
          </rect>
         </property>
         <property name="text">
          <string>切换相机</string>
         </property>
        </widget>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Tab 2</string>
-       </attribute>
+       <widget class="QTextBrowser" name="textBrowser">
+        <property name="geometry">
+         <rect>
+          <x>1000</x>
+          <y>10</y>
+          <width>256</width>
+          <height>101</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btn_test">
+        <property name="geometry">
+         <rect>
+          <x>860</x>
+          <y>30</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>相机状态</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnRecord">
+        <property name="geometry">
+         <rect>
+          <x>860</x>
+          <y>70</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>录像</string>
+        </property>
+       </widget>
+       <widget class="QWidget" name="widget" native="true">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>20</y>
+          <width>241</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label_ip1">
+           <property name="text">
+            <string>相机一IP:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_ip1"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="widget" native="true">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>60</y>
+          <width>241</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label_ip2">
+           <property name="text">
+            <string>相机二IP:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_ip2"/>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
     </item>

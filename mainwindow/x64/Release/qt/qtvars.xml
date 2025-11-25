@@ -1,11 +1,11 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-<Qt_DEFINES_>_WINDOWS;WIN32;WIN64;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG</Qt_DEFINES_>
-<Qt_INCLUDEPATH_>D:\Qt\5.9chart\5.9\msvc2017_64\include;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtWidgets;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtGui;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtANGLE;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtCore;D:\Qt\5.9chart\5.9\msvc2017_64\mkspecs\win32-msvc</Qt_INCLUDEPATH_>
+<Qt_DEFINES_>_WINDOWS;WIN32;WIN64;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CONCURRENT_LIB;QT_CORE_LIB;NDEBUG</Qt_DEFINES_>
+<Qt_INCLUDEPATH_>D:\Qt\5.9chart\5.9\msvc2017_64\include;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtWidgets;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtGui;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtANGLE;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtConcurrent;D:\Qt\5.9chart\5.9\msvc2017_64\include\QtCore;D:\Qt\5.9chart\5.9\msvc2017_64\mkspecs\win32-msvc</Qt_INCLUDEPATH_>
 <Qt_STDCPP_></Qt_STDCPP_>
 <Qt_RUNTIME_>MultiThreadedDLL</Qt_RUNTIME_>
 <Qt_CL_OPTIONS_>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding</Qt_CL_OPTIONS_>
-<Qt_LIBS_>D:\Qt\5.9chart\5.9\msvc2017_64\lib\qtmain.lib;shell32.lib;D:\Qt\5.9chart\5.9\msvc2017_64\lib\Qt5Widgets.lib;D:\Qt\5.9chart\5.9\msvc2017_64\lib\Qt5Gui.lib;D:\Qt\5.9chart\5.9\msvc2017_64\lib\Qt5Core.lib</Qt_LIBS_>
+<Qt_LIBS_>D:\Qt\5.9chart\5.9\msvc2017_64\lib\qtmain.lib;shell32.lib;D:\Qt\5.9chart\5.9\msvc2017_64\lib\Qt5Widgets.lib;D:\Qt\5.9chart\5.9\msvc2017_64\lib\Qt5Gui.lib;D:\Qt\5.9chart\5.9\msvc2017_64\lib\Qt5Concurrent.lib;D:\Qt\5.9chart\5.9\msvc2017_64\lib\Qt5Core.lib</Qt_LIBS_>
 <Qt_LINK_OPTIONS_>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'"</Qt_LINK_OPTIONS_>
 <QMake_QT_SYSROOT_></QMake_QT_SYSROOT_>
 <QMake_QT_INSTALL_PREFIX_>D:/Qt/5.9chart/5.9/msvc2017_64</QMake_QT_INSTALL_PREFIX_>
@@ -32,7 +32,7 @@
 <QMake_QMAKE_XSPEC_>win32-msvc</QMake_QMAKE_XSPEC_>
 <QMake_QMAKE_VERSION_>3.1</QMake_QMAKE_VERSION_>
 <QMake_QT_VERSION_>5.9.0</QMake_QT_VERSION_>
-<QtBkup_QtHash>jZExbgQxCEWvwgky1RYptmCBeEk8tgVY0SqKcv9bxDOaaKRt4oLG/P/h4S9lKaHxuF5eXumOFkDVBFJX+FROEg43LXuxvGkRvy7N6rtQLBqy7o8aWkuy2ttCmeraNMtQyRCSuFc7VQ5aKHeWhnGfjULmfQTmw8xqY4FqKg4eTK3NRmUsqWMSDyyMxmB98K8y6z/kWW+G9gDKP7Vt9NNnOVkOI4ysf9wD+2M5jeN4Usa/0Ya/9eZ2eEr5G2+SBV2+fwE=</QtBkup_QtHash>
+<QtBkup_QtHash>jVExbgQxCPyKX5CtrkhxBQfER+LFFsaKTlGU//8i7Gqjla6JCxqYGZjhS4jVxR/Xy8sr3sE8YTVOeUj6FMrsPRqKwyxw6Sa6F/GbKPfr0qy+M/oizuveFJeq2epoCxasa5PCgeIAIvde7UT1JIplEDfw+6wUEO0roBxkEosDqgn31J2wtVmpApoHZO4OSmCUbEQUK8/yD3iRm4E9Epaf2jb307GcXg5iCq1/2GH7YzmJER5rvBA3+9ts7oYnlb/1xoWh8/cv</QtBkup_QtHash>
     <QtVersion>5.9.0</QtVersion>
     <QtVersionMajor>5</QtVersionMajor>
     <QtVersionMinor>9</QtVersionMinor>

@@ -1,6 +1,8 @@
 #include "camerathread.h"
 #include <QDebug>
 #include <QImage> 
+#include <QDateTime>
+#include <QDir>
 
 std::vector<std::string> class_names = {
     "person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train",
@@ -23,7 +25,9 @@ CameraThread::CameraThread(QObject *parent) : QThread(parent) {}
 CameraThread::~CameraThread()
 {
     if (m_camera) {
-        stopCapture();
+        if (isRunning()) {
+            stopCapture();
+        }
         quit();
         wait(); // 等待线程结束
         
@@ -51,8 +55,9 @@ void CameraThread::stopCapture()
 //1.摄像头线程启动阶段
 void CameraThread::run()
 {
+    m_stopFlag = false; // 每次启动前重置标志位
     m_camera = new HikCamera();    //2.创建HikCamera对象--->转到hikcamera
-
+    m_writer = new cv::VideoWriter();
     // 创建 YOLO 对象
     // 加载 YOLO (确保 .onnx 文件路径正确)
     m_detector = new YoloV5Detector("yolov5s.onnx", cv::Size(640, 640), true);
@@ -77,6 +82,8 @@ void CameraThread::run()
      if (!m_camera->init(ip, user, pwd, port)) {
         delete m_camera;
         m_camera = nullptr;
+        delete m_detector;
+        m_detector = nullptr;
         return;
         }
 
@@ -94,6 +101,55 @@ void CameraThread::run()
             //    YOLO通常是用 BGR 训练的 (cv::imread)，所以这里最好转 BGR
             cv::cvtColor(yuvFrame, bgrFrame, cv::COLOR_YUV2BGR_YV12);
 
+
+            // ==========================================
+            // 录像逻辑
+            // ==========================================
+            bool shouldRecord = false;
+            {
+                QMutexLocker locker(&m_mutex);
+                shouldRecord = m_isRecordingRequest;
+            }
+
+            if (shouldRecord) {
+                // 如果 Writer 没打开，就打开它
+                if (!m_writer->isOpened()) {
+                    QString dirPath = "./video";
+                    QDir dir;
+                    if (!dir.exists(dirPath)) dir.mkpath(dirPath);
+
+                    QString fileName = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+                    // 注意：为了兼容性，文件名转成标准 std::string
+                    // 1920x1088 分辨率
+                    // 25.0 FPS
+                    // MJPG 编码 (文件大但CPU占用低，不卡顿)
+                    std::string savePath = QString("%1/%2.avi").arg(dirPath).arg(fileName).toStdString();
+
+                    m_writer->open(savePath, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 25.0, bgrFrame.size(), true);
+
+                    if (m_writer->isOpened()) {
+                        //qDebug() << "开始录像:" << fileName.c_str();
+                    }
+                    else {
+                        qDebug() << "录像创建失败！";
+                    }
+                }
+
+                // 写入帧
+                if (m_writer->isOpened()) {
+                    m_writer->write(bgrFrame);
+                }
+            }
+            else {
+                // 如果要求停止，且 Writer 是开着的，则关闭
+                if (m_writer->isOpened()) {
+                    m_writer->release();
+                    qDebug() << "录像结束，文件已保存";
+                }
+            }
+            // ==========================================
+
+
             // C. YOLO 推理
             //    直接把 bgrFrame 传进去
             auto detections = m_detector->detect(bgrFrame, 0.45f, 0.45f);
@@ -104,6 +160,10 @@ void CameraThread::run()
                 std::string label = class_names[det.class_id] + ": " + std::to_string((int)(det.confidence * 100)) + "%";
                 cv::putText(bgrFrame, label, cv::Point(det.box.x, det.box.y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0, 255, 0), 2);
             }
+
+
+            
+
 
             // E. 转 QImage 发给 UI
             //    注意：QImage 格式是 RGB888，而 bgrFrame 是 BGR
@@ -130,4 +190,36 @@ void CameraThread::run()
         delete m_detector;
         m_detector = nullptr;
     }
+}
+/*
+void CameraThread::toggleRecording()
+{
+    if (!m_camera) return;
+
+    if (m_camera->isRecording()) {
+        // 正在录 -> 停止
+        m_camera->stopRecord();
+        // 可以发信号告诉 UI 录像已停止
+    }
+    else {
+        // 未录像 -> 开始
+
+        // 1. 生成文件名 (例如: ./video/20231027_120000.mp4)
+        QString dirPath = "./video";
+        QDir dir;
+        if (!dir.exists(dirPath)) dir.mkpath(dirPath);
+
+        QString fileName = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+        QString fullPath = QString("%1/%2.mp4").arg(dirPath).arg(fileName);
+
+        // 2. 调用相机开始录像
+        m_camera->startRecord(fullPath);
+    }
+}
+*/
+
+void CameraThread::setRecordingState(bool isRecording)
+{
+    QMutexLocker locker(&m_mutex);
+    m_isRecordingRequest = isRecording;
 }

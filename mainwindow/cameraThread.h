@@ -3,7 +3,7 @@
 #include <QThread>
 #include "hikcamera.h"
 #include "YoloV5Detector.h"
-//#include "YoloProcessor.h"
+
 
 class CameraThread : public QThread
 {
@@ -11,11 +11,11 @@ class CameraThread : public QThread
 public:
     explicit CameraThread(QObject *parent = nullptr);
     ~CameraThread();
-
+    //void toggleRecording(); // 切换录像状态（开/关）
     void initialize(const QString& ip, const QString& user,
         const QString& pwd, int port = 8000);
     void stopCapture();
-
+    void setRecordingState(bool isRecording);
 signals:
     void errorMessage(const QString& msg);
     void frameReady(const QImage& image); // 发送给 UI 显示 (带框)
@@ -33,4 +33,7 @@ private:
     int m_port;
     QMutex m_mutex;
     bool m_stopFlag = false;
+
+    bool m_isRecordingRequest = false; // UI 请求的状态
+    cv::VideoWriter* m_writer = nullptr;
 };
