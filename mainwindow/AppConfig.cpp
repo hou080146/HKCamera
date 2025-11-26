@@ -6,6 +6,7 @@
 QString AppConfig::ConfigFile = "Config.ini";
 QString AppConfig::IP_1 = "192.168.1.64";
 QString AppConfig::IP_2 = "192.168.1.65";
+QString AppConfig::SavePath = "D:Vedio";
 bool AppConfig::WriteFlag = false;
 bool AppConfig::Style = false;
 
@@ -19,6 +20,7 @@ void AppConfig::readConfig()
     AppConfig::Style = set.value("Style").toBool();
     AppConfig::IP_1 = set.value("IP_1").toString();
     AppConfig::IP_2 = set.value("IP_2").toString();
+    AppConfig::SavePath = set.value("SavePath").toString();
     set.endGroup();
 
     if (!AppConfig::checkIniFile(AppConfig::ConfigFile))
@@ -38,6 +40,7 @@ void AppConfig::writeConfig()
     set.setValue("Style", AppConfig::Style);
     set.setValue("IP_1", AppConfig::IP_1);
     set.setValue("IP_2", AppConfig::IP_2);
+    set.setValue("SavePath", AppConfig::SavePath);
     set.endGroup();
 }
 

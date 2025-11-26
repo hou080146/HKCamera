@@ -14,6 +14,7 @@ public:
     static bool WriteFlag;
     static QString IP_1;
     static QString IP_2;
+    static QString SavePath;
 
     static void readConfig();
     static void writeConfig();

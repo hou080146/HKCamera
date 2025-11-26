@@ -106,27 +106,36 @@ void CameraThread::run()
             // 录像逻辑
             // ==========================================
             bool shouldRecord = false;
+            QString currentPathDir;
             {
                 QMutexLocker locker(&m_mutex);
                 shouldRecord = m_isRecordingRequest;
+                currentPathDir = m_savePath; // 获取当前设置的路径
             }
 
             if (shouldRecord) {
                 // 如果 Writer 没打开，就打开它
                 if (!m_writer->isOpened()) {
-                    QString dirPath = "./video";
                     QDir dir;
-                    if (!dir.exists(dirPath)) dir.mkpath(dirPath);
+                    if (!dir.exists(currentPathDir)) dir.mkpath(currentPathDir);
 
                     QString fileName = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
                     // 注意：为了兼容性，文件名转成标准 std::string
                     // 1920x1088 分辨率
                     // 25.0 FPS
                     // MJPG 编码 (文件大但CPU占用低，不卡顿)
-                    std::string savePath = QString("%1/%2.avi").arg(dirPath).arg(fileName).toStdString();
+                    // 拼接完整路径
+                    QString fullPath = QString("%1/%2.avi").arg(currentPathDir).arg(fileName);
 
-                    m_writer->open(savePath, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 25.0, bgrFrame.size(), true);
+                    // 【关键】Windows下 OpenCV 处理中文路径可能需要 Local8Bit
+                    // 如果路径包含中文，toStdString() 可能会乱码导致录像失败
+#ifdef Q_OS_WIN
+                    std::string savePathStr = fullPath.toLocal8Bit().constData();
+#else
+                    std::string savePathStr = fullPath.toStdString();
+#endif
 
+                    m_writer->open(savePathStr, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 25.0, bgrFrame.size(), true);
                     if (m_writer->isOpened()) {
                         //qDebug() << "开始录像:" << fileName.c_str();
                     }
@@ -222,4 +231,10 @@ void CameraThread::setRecordingState(bool isRecording)
 {
     QMutexLocker locker(&m_mutex);
     m_isRecordingRequest = isRecording;
+}
+
+void CameraThread::setSavePath(const QString& path)
+{
+    QMutexLocker locker(&m_mutex);
+    m_savePath = path;
 }

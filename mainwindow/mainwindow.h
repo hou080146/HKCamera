@@ -17,7 +17,8 @@ public:
     mainwindow(QWidget *parent = nullptr);
     ~mainwindow();
     void sendStatueBar(const QString& msg);
-
+    void onBtnOpenPathClicked();
+    void onBtnSelectPathClicked();
 protected:
     // 可选：重写 closeEvent 以便更优雅地处理关闭
     void closeEvent(QCloseEvent* event) override;
@@ -43,5 +44,6 @@ private:
     bool flagCamear = false;
     //用于异步等待测试结果
     QFutureWatcher<QString> m_testWatcher;
+    QString m_savepath = "";
     void init();
 };

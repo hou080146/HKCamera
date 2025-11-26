@@ -10,6 +10,12 @@
     <height>951</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
   <property name="maximumSize">
    <size>
     <width>1298</width>
@@ -20,6 +26,12 @@
    <string>mainwindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
+   <property name="maximumSize">
+    <size>
+     <width>1298</width>
+     <height>894</height>
+    </size>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QWidget" name="videoWidgetContainer" native="true">
@@ -46,7 +58,13 @@
      <widget class="QTabWidget" name="tabWidget">
       <property name="minimumSize">
        <size>
-        <width>0</width>
+        <width>1280</width>
+        <height>150</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>1280</width>
         <height>150</height>
        </size>
       </property>
@@ -61,9 +79,9 @@
         <property name="geometry">
          <rect>
           <x>280</x>
-          <y>30</y>
+          <y>25</y>
           <width>71</width>
-          <height>61</height>
+          <height>71</height>
          </rect>
         </property>
         <property name="text">
@@ -79,31 +97,8 @@
           <height>101</height>
          </rect>
         </property>
-       </widget>
-       <widget class="QPushButton" name="btn_test">
-        <property name="geometry">
-         <rect>
-          <x>860</x>
-          <y>30</y>
-          <width>75</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>相机状态</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="btnRecord">
-        <property name="geometry">
-         <rect>
-          <x>860</x>
-          <y>70</y>
-          <width>75</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>录像</string>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOn</enum>
         </property>
        </widget>
        <widget class="QWidget" name="widget" native="true">
@@ -147,6 +142,108 @@
          </item>
          <item>
           <widget class="QLineEdit" name="lineEdit_ip2"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QLineEdit" name="lineEditSavePath">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>380</x>
+          <y>70</y>
+          <width>241</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="frame">
+         <bool>false</bool>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QWidget" name="widget" native="true">
+        <property name="geometry">
+         <rect>
+          <x>380</x>
+          <y>20</y>
+          <width>241</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>录像保存路径:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnSelectPath">
+           <property name="text">
+            <string>修改路径</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="widget" native="true">
+        <property name="geometry">
+         <rect>
+          <x>890</x>
+          <y>5</y>
+          <width>91</width>
+          <height>111</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>3</number>
+         </property>
+         <property name="topMargin">
+          <number>3</number>
+         </property>
+         <property name="bottomMargin">
+          <number>3</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="btn_test">
+           <property name="text">
+            <string>相机状态</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnRecord">
+           <property name="text">
+            <string>录像</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnOpenPath">
+           <property name="text">
+            <string>打开文件夹</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

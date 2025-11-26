@@ -42,8 +42,6 @@ public:
     QWidget *tab;
     QPushButton *btn_switchCamera;
     QTextBrowser *textBrowser;
-    QPushButton *btn_test;
-    QPushButton *btnRecord;
     QWidget *widget;
     QHBoxLayout *horizontalLayout;
     QLabel *label_ip1;
@@ -52,6 +50,16 @@ public:
     QHBoxLayout *horizontalLayout_2;
     QLabel *label_ip2;
     QLineEdit *lineEdit_ip2;
+    QLineEdit *lineEditSavePath;
+    QWidget *widget2;
+    QHBoxLayout *horizontalLayout_3;
+    QLabel *label;
+    QPushButton *btnSelectPath;
+    QWidget *widget3;
+    QVBoxLayout *verticalLayout_2;
+    QPushButton *btn_test;
+    QPushButton *btnRecord;
+    QPushButton *btnOpenPath;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -61,9 +69,11 @@ public:
         if (mainwindowClass->objectName().isEmpty())
             mainwindowClass->setObjectName(QStringLiteral("mainwindowClass"));
         mainwindowClass->resize(1298, 951);
+        mainwindowClass->setMinimumSize(QSize(0, 0));
         mainwindowClass->setMaximumSize(QSize(1298, 951));
         centralWidget = new QWidget(mainwindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
+        centralWidget->setMaximumSize(QSize(1298, 894));
         verticalLayout = new QVBoxLayout(centralWidget);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
@@ -87,21 +97,17 @@ public:
 
         tabWidget = new QTabWidget(centralWidget);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
-        tabWidget->setMinimumSize(QSize(0, 150));
+        tabWidget->setMinimumSize(QSize(1280, 150));
+        tabWidget->setMaximumSize(QSize(1280, 150));
         tab = new QWidget();
         tab->setObjectName(QStringLiteral("tab"));
         btn_switchCamera = new QPushButton(tab);
         btn_switchCamera->setObjectName(QStringLiteral("btn_switchCamera"));
-        btn_switchCamera->setGeometry(QRect(280, 30, 71, 61));
+        btn_switchCamera->setGeometry(QRect(280, 25, 71, 71));
         textBrowser = new QTextBrowser(tab);
         textBrowser->setObjectName(QStringLiteral("textBrowser"));
         textBrowser->setGeometry(QRect(1000, 10, 256, 101));
-        btn_test = new QPushButton(tab);
-        btn_test->setObjectName(QStringLiteral("btn_test"));
-        btn_test->setGeometry(QRect(860, 30, 75, 23));
-        btnRecord = new QPushButton(tab);
-        btnRecord->setObjectName(QStringLiteral("btnRecord"));
-        btnRecord->setGeometry(QRect(860, 70, 75, 23));
+        textBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         widget = new QWidget(tab);
         widget->setObjectName(QStringLiteral("widget"));
         widget->setGeometry(QRect(30, 20, 241, 41));
@@ -136,6 +142,53 @@ public:
 
         horizontalLayout_2->addWidget(lineEdit_ip2);
 
+        lineEditSavePath = new QLineEdit(tab);
+        lineEditSavePath->setObjectName(QStringLiteral("lineEditSavePath"));
+        lineEditSavePath->setEnabled(true);
+        lineEditSavePath->setGeometry(QRect(380, 70, 241, 20));
+        lineEditSavePath->setFrame(false);
+        lineEditSavePath->setReadOnly(true);
+        widget2 = new QWidget(tab);
+        widget2->setObjectName(QStringLiteral("widget2"));
+        widget2->setGeometry(QRect(380, 20, 241, 41));
+        horizontalLayout_3 = new QHBoxLayout(widget2);
+        horizontalLayout_3->setSpacing(0);
+        horizontalLayout_3->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
+        horizontalLayout_3->setContentsMargins(0, 0, 0, 0);
+        label = new QLabel(widget2);
+        label->setObjectName(QStringLiteral("label"));
+
+        horizontalLayout_3->addWidget(label);
+
+        btnSelectPath = new QPushButton(widget2);
+        btnSelectPath->setObjectName(QStringLiteral("btnSelectPath"));
+
+        horizontalLayout_3->addWidget(btnSelectPath);
+
+        widget3 = new QWidget(tab);
+        widget3->setObjectName(QStringLiteral("widget3"));
+        widget3->setGeometry(QRect(890, 5, 91, 111));
+        verticalLayout_2 = new QVBoxLayout(widget3);
+        verticalLayout_2->setSpacing(3);
+        verticalLayout_2->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
+        verticalLayout_2->setContentsMargins(-1, 3, -1, 3);
+        btn_test = new QPushButton(widget3);
+        btn_test->setObjectName(QStringLiteral("btn_test"));
+
+        verticalLayout_2->addWidget(btn_test);
+
+        btnRecord = new QPushButton(widget3);
+        btnRecord->setObjectName(QStringLiteral("btnRecord"));
+
+        verticalLayout_2->addWidget(btnRecord);
+
+        btnOpenPath = new QPushButton(widget3);
+        btnOpenPath->setObjectName(QStringLiteral("btnOpenPath"));
+
+        verticalLayout_2->addWidget(btnOpenPath);
+
         tabWidget->addTab(tab, QString());
 
         verticalLayout->addWidget(tabWidget);
@@ -164,10 +217,13 @@ public:
     {
         mainwindowClass->setWindowTitle(QApplication::translate("mainwindowClass", "mainwindow", Q_NULLPTR));
         btn_switchCamera->setText(QApplication::translate("mainwindowClass", "\345\210\207\346\215\242\347\233\270\346\234\272", Q_NULLPTR));
-        btn_test->setText(QApplication::translate("mainwindowClass", "\347\233\270\346\234\272\347\212\266\346\200\201", Q_NULLPTR));
-        btnRecord->setText(QApplication::translate("mainwindowClass", "\345\275\225\345\203\217", Q_NULLPTR));
         label_ip1->setText(QApplication::translate("mainwindowClass", "\347\233\270\346\234\272\344\270\200IP:", Q_NULLPTR));
         label_ip2->setText(QApplication::translate("mainwindowClass", "\347\233\270\346\234\272\344\272\214IP:", Q_NULLPTR));
+        label->setText(QApplication::translate("mainwindowClass", "\345\275\225\345\203\217\344\277\235\345\255\230\350\267\257\345\276\204:", Q_NULLPTR));
+        btnSelectPath->setText(QApplication::translate("mainwindowClass", "\344\277\256\346\224\271\350\267\257\345\276\204", Q_NULLPTR));
+        btn_test->setText(QApplication::translate("mainwindowClass", "\347\233\270\346\234\272\347\212\266\346\200\201", Q_NULLPTR));
+        btnRecord->setText(QApplication::translate("mainwindowClass", "\345\275\225\345\203\217", Q_NULLPTR));
+        btnOpenPath->setText(QApplication::translate("mainwindowClass", "\346\211\223\345\274\200\346\226\207\344\273\266\345\244\271", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("mainwindowClass", "\345\212\237\350\203\275\346\240\217", Q_NULLPTR));
     } // retranslateUi
 

@@ -1,4 +1,9 @@
 ﻿   Qt/MSBuild: 3.4.1.0
-  Reading Qt configuration (D:/Qt/5.9chart/5.9/msvc2017_64/bin/qmake)
    Qt: 5.9.0
+  main.cpp
+  mainwindow.cpp
+F:\hmy\mainwindow\mainwindow\HCNetSDK.h(41172,1): warning C4010: 单行注释包含行继续符 (编译源文件 mainwindow.cpp)
+F:\hmy\mainwindow\mainwindow\HCNetSDK.h(41172,1): warning C4010: 单行注释包含行继续符 (编译源文件 main.cpp)
+  moc_mainwindow.cpp
+F:\hmy\mainwindow\mainwindow\HCNetSDK.h(41172,1): warning C4010: 单行注释包含行继续符
   mainwindow.vcxproj -> F:\hmy\mainwindow\x64\Release\mainwindow.exe

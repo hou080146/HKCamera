@@ -5,6 +5,8 @@
 #include "AppConfig.h"
 #include <QTimer>
 #include <QtConcurrent>
+#include <QFileDialog>      // 【新增】文件对话框
+#include <QDesktopServices> // 【新增】打开系统文件夹
 
 mainwindow::mainwindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::mainwindowClass)
@@ -87,8 +89,15 @@ void mainwindow::init()
 
     IP_1 = AppConfig::IP_1;
     IP_2 = AppConfig::IP_2;
+    
     ui->lineEdit_ip1->setText(IP_1);
     ui->lineEdit_ip2->setText(IP_2);
+
+    // 录像保存路径
+    m_savepath = AppConfig::SavePath;
+    ui->lineEditSavePath->setText(m_savepath);
+    m_cameraThread->setSavePath(m_savepath); // 同步给线程
+
     connect(ui->lineEdit_ip1, &QLineEdit::textEdited,
         this, &mainwindow::saveConfig);
     connect(ui->lineEdit_ip2, &QLineEdit::textEdited,
@@ -97,7 +106,14 @@ void mainwindow::init()
         this, &mainwindow::switchCamear);
     connect(ui->btn_test, &QPushButton::clicked,
         this, &mainwindow::onBtnTestClicked);
+
+    // 连接录像按钮
     connect(ui->btnRecord, &QPushButton::clicked, this, &mainwindow::onRecordClicked);
+    // 连接选择路径按钮
+    connect(ui->btnSelectPath, &QPushButton::clicked, this, &mainwindow::onBtnSelectPathClicked);
+    // 连接打开文件夹按钮
+    connect(ui->btnOpenPath, &QPushButton::clicked, this, &mainwindow::onBtnOpenPathClicked);
+
     if (ui->videoLayout) {
         ui->videoLayout->addWidget(m_glWidget);
     }
@@ -109,9 +125,11 @@ void mainwindow::init()
     //防止相机没有初始化好用户点击
     ui->btn_switchCamera->setEnabled(false);
     ui->btn_switchCamera->setText("请稍等");
+    ui->btnRecord->setEnabled(false);
     QTimer::singleShot(7000, this, [=]() {
         // 5秒后会自动执行这里的代码
         ui->btn_switchCamera->setEnabled(true);
+        ui->btnRecord->setEnabled(true);
         ui->btn_switchCamera->setText("切换相机"); // 恢复原始文字
         });
 }
@@ -139,6 +157,7 @@ void mainwindow::saveConfig()
 {
     AppConfig::IP_1 = ui->lineEdit_ip1->text();
     AppConfig::IP_2 = ui->lineEdit_ip2->text();
+    AppConfig::SavePath = ui->lineEditSavePath->text();
     AppConfig::writeConfig();
 }
 
@@ -191,6 +210,8 @@ void mainwindow::switchCamear()
 void mainwindow::onBtnTestClicked()
 {
     ui->textBrowser->append("正在测试相机连接状态...");
+    ui->textBrowser->moveCursor(QTextCursor::End);
+    ui->textBrowser->ensureCursorVisible();
     QString ip = IP_1;
     QString ip_1 = IP_2;
     QString user = "admin";      // ui->lineEditUser->text();
@@ -275,6 +296,8 @@ void mainwindow::onTestFinished()
 
     // 3. 显示结果 (状态栏 或 弹窗)
     ui->textBrowser->append("测试结果: \r\n" + result);
+    ui->textBrowser->moveCursor(QTextCursor::End);
+    ui->textBrowser->ensureCursorVisible();
     
 
 }
@@ -288,14 +311,66 @@ void mainwindow::onRecordClicked()
 
     // 只需要设置状态，具体操作由线程循环去执行
     m_cameraThread->setRecordingState(isRec);
-        ui->btnRecord->setText(isRec ? "停止录像" : "开始录像");
+    int h = ui->btnRecord->height();  // 记录当前高度
+    ui->btnRecord->setText(isRec ? "停止录像" : "开始录像");
 
-        // 给个样式，录像时变红
-        if (isRec) {
-            ui->btnRecord->setStyleSheet("background-color: red; color: white;");
-        }
-        else {
-            ui->btnRecord->setStyleSheet("");
-        }
+    // 给个样式，录像时变红
+    if (isRec)
+    {
+        
+        ui->btnRecord->setStyleSheet("background-color: red; color: white;");
+        
+        // 录像开始时，禁用路径选择按钮，防止出错
+        ui->btnSelectPath->setEnabled(false);
+        ui->lineEditSavePath->setEnabled(false);
+    }
+    else 
+    {
+        ui->btnRecord->setStyleSheet("");
+        // 录像停止后，恢复可用
+        ui->btnSelectPath->setEnabled(true);
+        ui->lineEditSavePath->setEnabled(true);
+    }
+    ui->btnRecord->setMinimumHeight(h);
+    ui->btnRecord->setMaximumHeight(h);
     
+}
+
+void mainwindow::onBtnSelectPathClicked()
+{
+    // 正在录像时禁止修改路径，防止逻辑混乱
+    if (ui->btnRecord->text().contains("停止")) {
+        // 提示用户先停止录像
+        ui->statusBar->showMessage("请先停止录像再修改路径！", 3000);
+        return;
+    }
+
+    // 打开文件夹选择对话框
+    QString dir = QFileDialog::getExistingDirectory(this, "选择录像保存路径",
+        ui->lineEditSavePath->text(),
+        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+    if (!dir.isEmpty()) {
+        ui->lineEditSavePath->setText(dir);
+        saveConfig();
+        // 将新路径传给线程
+        if (m_cameraThread) {
+            m_cameraThread->setSavePath(dir);
+        }
+    }
+}
+
+// 打开所在文件夹
+void mainwindow::onBtnOpenPathClicked()
+{
+    QString path = ui->lineEditSavePath->text();
+    QDir dir(path);
+
+    // 如果目录不存在，先创建，防止打开失败
+    if (!dir.exists()) {
+        dir.mkpath(path);
+    }
+
+    // 调用系统资源管理器打开
+    QDesktopServices::openUrl(QUrl::fromLocalFile(path));
 }

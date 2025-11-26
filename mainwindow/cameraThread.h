@@ -16,6 +16,7 @@ public:
         const QString& pwd, int port = 8000);
     void stopCapture();
     void setRecordingState(bool isRecording);
+    void setSavePath(const QString& path);
 signals:
     void errorMessage(const QString& msg);
     void frameReady(const QImage& image); // 发送给 UI 显示 (带框)
@@ -36,4 +37,5 @@ private:
 
     bool m_isRecordingRequest = false; // UI 请求的状态
     cv::VideoWriter* m_writer = nullptr;
+    QString m_savePath;
 };
