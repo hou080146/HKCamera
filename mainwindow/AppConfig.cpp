@@ -6,6 +6,10 @@
 QString AppConfig::ConfigFile = "Config.ini";
 QString AppConfig::IP_1 = "192.168.1.64";
 QString AppConfig::IP_2 = "192.168.1.65";
+QString AppConfig::user1 = "admin";
+QString AppConfig::user2 = "admin";
+QString AppConfig::password1 = "ck1234";
+QString AppConfig::password2 = "ck1234";
 QString AppConfig::SavePath = "D:Vedio";
 bool AppConfig::WriteFlag = false;
 bool AppConfig::Style = false;
@@ -20,6 +24,10 @@ void AppConfig::readConfig()
     AppConfig::Style = set.value("Style").toBool();
     AppConfig::IP_1 = set.value("IP_1").toString();
     AppConfig::IP_2 = set.value("IP_2").toString();
+    AppConfig::user1 = set.value("user1").toString();
+    AppConfig::user2 = set.value("user2").toString();
+    AppConfig::password1 = set.value("password1").toString();
+    AppConfig::password2 = set.value("password2").toString();
     AppConfig::SavePath = set.value("SavePath").toString();
     set.endGroup();
 
@@ -40,6 +48,10 @@ void AppConfig::writeConfig()
     set.setValue("Style", AppConfig::Style);
     set.setValue("IP_1", AppConfig::IP_1);
     set.setValue("IP_2", AppConfig::IP_2);
+    set.setValue("user1", AppConfig::user1);
+    set.setValue("user2", AppConfig::user2);
+    set.setValue("password1", AppConfig::password1);
+    set.setValue("password2", AppConfig::password2);
     set.setValue("SavePath", AppConfig::SavePath);
     set.endGroup();
 }

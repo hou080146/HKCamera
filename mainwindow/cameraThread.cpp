@@ -90,6 +90,7 @@ void CameraThread::run()
     m_camera->startPreview();
     // 3. 开始处理循环 (替代原来的 exec())
     cv::Mat yuvFrame;
+    //bgr原图
     cv::Mat bgrFrame;
 
     while (!m_stopFlag) {
@@ -98,13 +99,13 @@ void CameraThread::run()
 
             // B. 格式转换 YUV -> BGR (必须做，YOLO 需要 BGR)
             //    cv::COLOR_YUV2RGB_YV12 会转成 RGB，注意 OpenCV 默认是 BGR
-            //    YOLO通常是用 BGR 训练的 (cv::imread)，所以这里最好转 BGR
             cv::cvtColor(yuvFrame, bgrFrame, cv::COLOR_YUV2BGR_YV12);
 
+            cv::Mat detectFrame;     // 输入检测器
+            cv::Rect currentROI;     // 当前使用的 ROI
+            bool isCropped = false;
 
-            // ==========================================
-            // 录像逻辑
-            // ==========================================
+            //录像标志位和保存路径
             bool shouldRecord = false;
             QString currentPathDir;
             {
@@ -113,6 +114,31 @@ void CameraThread::run()
                 currentPathDir = m_savePath; // 获取当前设置的路径
             }
 
+
+            {
+                QMutexLocker locker(&m_roiMutex);
+                if (m_useROI && !m_roiRect.empty()) {
+                    // 边界保护：防止画框画出视频外导致崩馈
+                    currentROI = m_roiRect & cv::Rect(0, 0, bgrFrame.cols, bgrFrame.rows);
+
+                    if (currentROI.width > 0 && currentROI.height > 0) {
+                        // 裁剪图像 (浅拷贝，不耗时)
+                        detectFrame = bgrFrame(currentROI);
+                        isCropped = true;
+                    }
+                    else {
+                        detectFrame = bgrFrame; // ROI 无效，回退到全图
+                    }
+                }
+                else {
+                    detectFrame = bgrFrame; // 全图检测
+                }
+            }
+
+
+            // ==========================================
+            // 是否录像
+            // ==========================================
             if (shouldRecord) {
                 // 如果 Writer 没打开，就打开它
                 if (!m_writer->isOpened()) {
@@ -158,13 +184,20 @@ void CameraThread::run()
             }
             // ==========================================
 
-
             // C. YOLO 推理
-            //    直接把 bgrFrame 传进去
-            auto detections = m_detector->detect(bgrFrame, 0.45f, 0.45f);
+            //    直接把 detectFrame 传进去
+            auto detections = m_detector->detect(detectFrame, 0.45f, 0.45f);
 
-            // D. 绘制框 (在 bgrFrame 上直接画)
-            for (const auto& det : detections) {
+            // D. 绘制框
+            for (auto& det : detections) {
+                //是否裁剪
+                if (isCropped) {
+                    det.box.x += currentROI.x;
+                    det.box.y += currentROI.y;
+                }
+                // 在 ROI 左上角显示 "ROI Mode"
+                cv::putText(bgrFrame, "ROI Area", cv::Point(currentROI.x, currentROI.y - 10),
+                    cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 255, 0), 2);
                 cv::rectangle(bgrFrame, det.box, cv::Scalar(0, 255, 0), 2);
                 std::string label = class_names[det.class_id] + ": " + std::to_string((int)(det.confidence * 100)) + "%";
                 cv::putText(bgrFrame, label, cv::Point(det.box.x, det.box.y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0, 255, 0), 2);
@@ -200,32 +233,7 @@ void CameraThread::run()
         m_detector = nullptr;
     }
 }
-/*
-void CameraThread::toggleRecording()
-{
-    if (!m_camera) return;
 
-    if (m_camera->isRecording()) {
-        // 正在录 -> 停止
-        m_camera->stopRecord();
-        // 可以发信号告诉 UI 录像已停止
-    }
-    else {
-        // 未录像 -> 开始
-
-        // 1. 生成文件名 (例如: ./video/20231027_120000.mp4)
-        QString dirPath = "./video";
-        QDir dir;
-        if (!dir.exists(dirPath)) dir.mkpath(dirPath);
-
-        QString fileName = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
-        QString fullPath = QString("%1/%2.mp4").arg(dirPath).arg(fileName);
-
-        // 2. 调用相机开始录像
-        m_camera->startRecord(fullPath);
-    }
-}
-*/
 
 void CameraThread::setRecordingState(bool isRecording)
 {
@@ -237,4 +245,21 @@ void CameraThread::setSavePath(const QString& path)
 {
     QMutexLocker locker(&m_mutex);
     m_savePath = path;
+}
+
+
+//设置 ROI
+void CameraThread::setROI(const cv::Rect& rect)
+{
+    QMutexLocker locker(&m_roiMutex);
+    m_roiRect = rect;
+    m_useROI = true;
+}
+
+//清除 ROI
+void CameraThread::clearROI()
+{
+    QMutexLocker locker(&m_roiMutex);
+    m_useROI = false;
+    m_roiRect = cv::Rect();
 }

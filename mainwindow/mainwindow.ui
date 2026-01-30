@@ -71,15 +71,33 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
+      <property name="elideMode">
+       <enum>Qt::ElideNone</enum>
+      </property>
+      <property name="usesScrollButtons">
+       <bool>true</bool>
+      </property>
+      <property name="documentMode">
+       <bool>false</bool>
+      </property>
+      <property name="tabsClosable">
+       <bool>false</bool>
+      </property>
+      <property name="movable">
+       <bool>false</bool>
+      </property>
+      <property name="tabBarAutoHide">
+       <bool>false</bool>
+      </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>功能栏</string>
+        <string>监控</string>
        </attribute>
        <widget class="QPushButton" name="btn_switchCamera">
         <property name="geometry">
          <rect>
-          <x>280</x>
-          <y>25</y>
+          <x>10</x>
+          <y>30</y>
           <width>71</width>
           <height>71</height>
          </rect>
@@ -101,58 +119,14 @@
          <enum>Qt::ScrollBarAlwaysOn</enum>
         </property>
        </widget>
-       <widget class="QWidget" name="widget" native="true">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>20</y>
-          <width>241</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLabel" name="label_ip1">
-           <property name="text">
-            <string>相机一IP:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEdit_ip1"/>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="widget" native="true">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>60</y>
-          <width>241</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QLabel" name="label_ip2">
-           <property name="text">
-            <string>相机二IP:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEdit_ip2"/>
-         </item>
-        </layout>
-       </widget>
        <widget class="QLineEdit" name="lineEditSavePath">
         <property name="enabled">
          <bool>true</bool>
         </property>
         <property name="geometry">
          <rect>
-          <x>380</x>
-          <y>70</y>
+          <x>110</x>
+          <y>80</y>
           <width>241</width>
           <height>20</height>
          </rect>
@@ -167,8 +141,8 @@
        <widget class="QWidget" name="widget" native="true">
         <property name="geometry">
          <rect>
-          <x>380</x>
-          <y>20</y>
+          <x>110</x>
+          <y>30</y>
           <width>241</width>
           <height>41</height>
          </rect>
@@ -242,6 +216,151 @@
           <widget class="QPushButton" name="btnOpenPath">
            <property name="text">
             <string>打开文件夹</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QPushButton" name="btnOpenVideo">
+        <property name="geometry">
+         <rect>
+          <x>800</x>
+          <y>20</y>
+          <width>71</width>
+          <height>71</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>回放</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnClearRoi">
+        <property name="geometry">
+         <rect>
+          <x>430</x>
+          <y>80</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>清除ROI</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnSelectRoi">
+        <property name="geometry">
+         <rect>
+          <x>430</x>
+          <y>30</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>选取ROI</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>设置</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>201</width>
+          <height>104</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>相机一</string>
+        </property>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_ip1">
+           <property name="text">
+            <string>IP:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="lineEdit_ip1"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>用户名:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lineEdit_user_1"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>密码:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="lineEdit_password_1">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>20</y>
+          <width>201</width>
+          <height>104</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>相机二</string>
+        </property>
+        <layout class="QFormLayout" name="formLayout_2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_ip2">
+           <property name="text">
+            <string>IP:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="lineEdit_ip2"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>用户名:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lineEdit_user_2"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>密码:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="lineEdit_password_2">
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
            </property>
           </widget>
          </item>

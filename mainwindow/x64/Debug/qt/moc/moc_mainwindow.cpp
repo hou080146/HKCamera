@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_mainwindow_t {
-    QByteArrayData data[16];
-    char stringdata0[213];
+    QByteArrayData data[9];
+    char stringdata0[100];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -39,22 +39,12 @@ QT_MOC_LITERAL(4, 28, 10), // "saveConfig"
 QT_MOC_LITERAL(5, 39, 12), // "switchCamear"
 QT_MOC_LITERAL(6, 52, 16), // "onBtnTestClicked"
 QT_MOC_LITERAL(7, 69, 14), // "onTestFinished"
-QT_MOC_LITERAL(8, 84, 15), // "onRecordClicked"
-QT_MOC_LITERAL(9, 100, 21), // "onBtnOpenVideoClicked"
-QT_MOC_LITERAL(10, 122, 15), // "onVideoFinished"
-QT_MOC_LITERAL(11, 138, 13), // "onRoiSelected"
-QT_MOC_LITERAL(12, 152, 6), // "uiRect"
-QT_MOC_LITERAL(13, 159, 10), // "widgetSize"
-QT_MOC_LITERAL(14, 170, 20), // "onBtnClearRoiClicked"
-QT_MOC_LITERAL(15, 191, 21) // "onBtnSelectRoiClicked"
+QT_MOC_LITERAL(8, 84, 15) // "onRecordClicked"
 
     },
     "mainwindow\0handleError\0\0msg\0saveConfig\0"
     "switchCamear\0onBtnTestClicked\0"
-    "onTestFinished\0onRecordClicked\0"
-    "onBtnOpenVideoClicked\0onVideoFinished\0"
-    "onRoiSelected\0uiRect\0widgetSize\0"
-    "onBtnClearRoiClicked\0onBtnSelectRoiClicked"
+    "onTestFinished\0onRecordClicked"
 };
 #undef QT_MOC_LITERAL
 
@@ -64,7 +54,7 @@ static const uint qt_meta_data_mainwindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      11,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -72,28 +62,18 @@ static const uint qt_meta_data_mainwindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    1,   69,    2, 0x08 /* Private */,
-       4,    0,   72,    2, 0x08 /* Private */,
-       5,    0,   73,    2, 0x08 /* Private */,
-       6,    0,   74,    2, 0x08 /* Private */,
-       7,    0,   75,    2, 0x08 /* Private */,
-       8,    0,   76,    2, 0x08 /* Private */,
-       9,    0,   77,    2, 0x08 /* Private */,
-      10,    0,   78,    2, 0x08 /* Private */,
-      11,    2,   79,    2, 0x08 /* Private */,
-      14,    0,   84,    2, 0x08 /* Private */,
-      15,    0,   85,    2, 0x08 /* Private */,
+       1,    1,   44,    2, 0x08 /* Private */,
+       4,    0,   47,    2, 0x08 /* Private */,
+       5,    0,   48,    2, 0x08 /* Private */,
+       6,    0,   49,    2, 0x08 /* Private */,
+       7,    0,   50,    2, 0x08 /* Private */,
+       8,    0,   51,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void, QMetaType::QString,    3,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void, QMetaType::QRect, QMetaType::QSize,   12,   13,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -112,11 +92,6 @@ void mainwindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 3: _t->onBtnTestClicked(); break;
         case 4: _t->onTestFinished(); break;
         case 5: _t->onRecordClicked(); break;
-        case 6: _t->onBtnOpenVideoClicked(); break;
-        case 7: _t->onVideoFinished(); break;
-        case 8: _t->onRoiSelected((*reinterpret_cast< QRect(*)>(_a[1])),(*reinterpret_cast< QSize(*)>(_a[2]))); break;
-        case 9: _t->onBtnClearRoiClicked(); break;
-        case 10: _t->onBtnSelectRoiClicked(); break;
         default: ;
         }
     }
@@ -147,13 +122,13 @@ int mainwindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 11)
+        if (_id < 6)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 6;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 11)
+        if (_id < 6)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 11;
+        _id -= 6;
     }
     return _id;
 }

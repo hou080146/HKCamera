@@ -58,6 +58,9 @@
     <ClCompile Include="appinit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="videofilethread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="cameraThread.h">
@@ -73,6 +76,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="appinit.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="videofilethread.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

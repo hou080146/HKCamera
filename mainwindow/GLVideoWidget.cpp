@@ -74,3 +74,89 @@ void GLVideoWidget::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);
 }
+
+void GLVideoWidget::setDrawingMode(bool enable)
+{
+    m_canDraw = enable;
+
+    // 设置鼠标样式：允许画的时候是十字，平时是箭头
+    if (enable) {
+        setCursor(Qt::CrossCursor);
+    }
+    else {
+        setCursor(Qt::ArrowCursor);
+    }
+}
+
+
+void GLVideoWidget::clearROI()
+{
+    m_selectionRect = QRect();
+    m_isDrawing = false;
+    m_canDraw = false; // 清除后默认不能马上画，必须再次点击按钮
+    setCursor(Qt::ArrowCursor);
+    update();
+}
+
+void GLVideoWidget::mousePressEvent(QMouseEvent* event)
+{
+    if (!m_canDraw) return;
+
+    if (event->button() == Qt::LeftButton) {
+        m_isDrawing = true;
+        m_startPoint = event->pos();
+        m_selectionRect = QRect(); // 清空旧的
+        update();
+    }
+}
+
+void GLVideoWidget::mouseMoveEvent(QMouseEvent* event)
+{
+    if (m_isDrawing && m_canDraw) {
+        m_selectionRect = QRect(m_startPoint, event->pos()).normalized();
+        update();
+    }
+}
+
+void GLVideoWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+    //只有在拖拽状态下才处理
+    if (event->button() == Qt::LeftButton && m_isDrawing && m_canDraw) {
+        m_isDrawing = false;
+        m_selectionRect = QRect(m_startPoint, event->pos()).normalized();
+
+        if (m_selectionRect.width() > 10 && m_selectionRect.height() > 10) {
+            // 1. 发送信号给主界面
+            emit roiSelected(m_selectionRect, this->size());
+
+            // 2. 【关键】画完这一次，立即锁定！防止用户手抖又画了一个
+            // 必须等待用户点“清除”或者再次点“选择ROI”才能重画
+            setDrawingMode(false);
+        }
+        else {
+            // 框太小视为无效，重置
+            m_selectionRect = QRect();
+        }
+        update();
+    }
+}
+
+void GLVideoWidget::paintEvent(QPaintEvent* event)
+{
+    QPainter painter(this);
+
+    // 1. 画视频
+    if (!m_frame.isNull()) {
+        painter.drawImage(rect(), m_frame);
+    }
+    else {
+        painter.fillRect(rect(), Qt::black);
+    }
+
+    // 2. 画框
+    if (!m_selectionRect.isNull()) {
+        QPen pen(Qt::red, 3, Qt::SolidLine);
+        painter.setPen(pen);
+        painter.drawRect(m_selectionRect);
+    }
+}

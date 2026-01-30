@@ -13,9 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QFormLayout>
 #include <QtWidgets/QGridLayout>
-#include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
@@ -44,36 +42,24 @@ public:
     QWidget *tab;
     QPushButton *btn_switchCamera;
     QTextBrowser *textBrowser;
-    QLineEdit *lineEditSavePath;
     QWidget *widget;
+    QHBoxLayout *horizontalLayout;
+    QLabel *label_ip1;
+    QLineEdit *lineEdit_ip1;
+    QWidget *widget1;
+    QHBoxLayout *horizontalLayout_2;
+    QLabel *label_ip2;
+    QLineEdit *lineEdit_ip2;
+    QLineEdit *lineEditSavePath;
+    QWidget *widget2;
     QHBoxLayout *horizontalLayout_3;
     QLabel *label;
     QPushButton *btnSelectPath;
-    QWidget *widget1;
+    QWidget *widget3;
     QVBoxLayout *verticalLayout_2;
     QPushButton *btn_test;
     QPushButton *btnRecord;
     QPushButton *btnOpenPath;
-    QPushButton *btnOpenVideo;
-    QPushButton *btnClearRoi;
-    QPushButton *btnSelectRoi;
-    QWidget *tab_2;
-    QGroupBox *groupBox;
-    QFormLayout *formLayout;
-    QLabel *label_ip1;
-    QLineEdit *lineEdit_ip1;
-    QLabel *label_2;
-    QLineEdit *lineEdit_user_1;
-    QLabel *label_3;
-    QLineEdit *lineEdit_password_1;
-    QGroupBox *groupBox_2;
-    QFormLayout *formLayout_2;
-    QLabel *label_ip2;
-    QLineEdit *lineEdit_ip2;
-    QLabel *label_5;
-    QLineEdit *lineEdit_user_2;
-    QLabel *label_4;
-    QLineEdit *lineEdit_password_2;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -113,157 +99,97 @@ public:
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
         tabWidget->setMinimumSize(QSize(1280, 150));
         tabWidget->setMaximumSize(QSize(1280, 150));
-        tabWidget->setElideMode(Qt::ElideNone);
-        tabWidget->setUsesScrollButtons(true);
-        tabWidget->setDocumentMode(false);
-        tabWidget->setTabsClosable(false);
-        tabWidget->setMovable(false);
-        tabWidget->setTabBarAutoHide(false);
         tab = new QWidget();
         tab->setObjectName(QStringLiteral("tab"));
         btn_switchCamera = new QPushButton(tab);
         btn_switchCamera->setObjectName(QStringLiteral("btn_switchCamera"));
-        btn_switchCamera->setGeometry(QRect(10, 30, 71, 71));
+        btn_switchCamera->setGeometry(QRect(280, 25, 71, 71));
         textBrowser = new QTextBrowser(tab);
         textBrowser->setObjectName(QStringLiteral("textBrowser"));
         textBrowser->setGeometry(QRect(1000, 10, 256, 101));
         textBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        widget = new QWidget(tab);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(30, 20, 241, 41));
+        horizontalLayout = new QHBoxLayout(widget);
+        horizontalLayout->setSpacing(6);
+        horizontalLayout->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        label_ip1 = new QLabel(widget);
+        label_ip1->setObjectName(QStringLiteral("label_ip1"));
+
+        horizontalLayout->addWidget(label_ip1);
+
+        lineEdit_ip1 = new QLineEdit(widget);
+        lineEdit_ip1->setObjectName(QStringLiteral("lineEdit_ip1"));
+
+        horizontalLayout->addWidget(lineEdit_ip1);
+
+        widget1 = new QWidget(tab);
+        widget1->setObjectName(QStringLiteral("widget1"));
+        widget1->setGeometry(QRect(30, 60, 241, 41));
+        horizontalLayout_2 = new QHBoxLayout(widget1);
+        horizontalLayout_2->setSpacing(6);
+        horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        label_ip2 = new QLabel(widget1);
+        label_ip2->setObjectName(QStringLiteral("label_ip2"));
+
+        horizontalLayout_2->addWidget(label_ip2);
+
+        lineEdit_ip2 = new QLineEdit(widget1);
+        lineEdit_ip2->setObjectName(QStringLiteral("lineEdit_ip2"));
+
+        horizontalLayout_2->addWidget(lineEdit_ip2);
+
         lineEditSavePath = new QLineEdit(tab);
         lineEditSavePath->setObjectName(QStringLiteral("lineEditSavePath"));
         lineEditSavePath->setEnabled(true);
-        lineEditSavePath->setGeometry(QRect(110, 80, 241, 20));
+        lineEditSavePath->setGeometry(QRect(380, 70, 241, 20));
         lineEditSavePath->setFrame(false);
         lineEditSavePath->setReadOnly(true);
-        widget = new QWidget(tab);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(110, 30, 241, 41));
-        horizontalLayout_3 = new QHBoxLayout(widget);
+        widget2 = new QWidget(tab);
+        widget2->setObjectName(QStringLiteral("widget2"));
+        widget2->setGeometry(QRect(380, 20, 241, 41));
+        horizontalLayout_3 = new QHBoxLayout(widget2);
         horizontalLayout_3->setSpacing(0);
         horizontalLayout_3->setContentsMargins(11, 11, 11, 11);
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
         horizontalLayout_3->setContentsMargins(0, 0, 0, 0);
-        label = new QLabel(widget);
+        label = new QLabel(widget2);
         label->setObjectName(QStringLiteral("label"));
 
         horizontalLayout_3->addWidget(label);
 
-        btnSelectPath = new QPushButton(widget);
+        btnSelectPath = new QPushButton(widget2);
         btnSelectPath->setObjectName(QStringLiteral("btnSelectPath"));
 
         horizontalLayout_3->addWidget(btnSelectPath);
 
-        widget1 = new QWidget(tab);
-        widget1->setObjectName(QStringLiteral("widget1"));
-        widget1->setGeometry(QRect(890, 5, 91, 111));
-        verticalLayout_2 = new QVBoxLayout(widget1);
+        widget3 = new QWidget(tab);
+        widget3->setObjectName(QStringLiteral("widget3"));
+        widget3->setGeometry(QRect(890, 5, 91, 111));
+        verticalLayout_2 = new QVBoxLayout(widget3);
         verticalLayout_2->setSpacing(3);
         verticalLayout_2->setContentsMargins(11, 11, 11, 11);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         verticalLayout_2->setContentsMargins(-1, 3, -1, 3);
-        btn_test = new QPushButton(widget1);
+        btn_test = new QPushButton(widget3);
         btn_test->setObjectName(QStringLiteral("btn_test"));
 
         verticalLayout_2->addWidget(btn_test);
 
-        btnRecord = new QPushButton(widget1);
+        btnRecord = new QPushButton(widget3);
         btnRecord->setObjectName(QStringLiteral("btnRecord"));
 
         verticalLayout_2->addWidget(btnRecord);
 
-        btnOpenPath = new QPushButton(widget1);
+        btnOpenPath = new QPushButton(widget3);
         btnOpenPath->setObjectName(QStringLiteral("btnOpenPath"));
 
         verticalLayout_2->addWidget(btnOpenPath);
 
-        btnOpenVideo = new QPushButton(tab);
-        btnOpenVideo->setObjectName(QStringLiteral("btnOpenVideo"));
-        btnOpenVideo->setGeometry(QRect(800, 20, 71, 71));
-        btnClearRoi = new QPushButton(tab);
-        btnClearRoi->setObjectName(QStringLiteral("btnClearRoi"));
-        btnClearRoi->setGeometry(QRect(430, 80, 75, 23));
-        btnSelectRoi = new QPushButton(tab);
-        btnSelectRoi->setObjectName(QStringLiteral("btnSelectRoi"));
-        btnSelectRoi->setGeometry(QRect(430, 30, 75, 23));
         tabWidget->addTab(tab, QString());
-        tab_2 = new QWidget();
-        tab_2->setObjectName(QStringLiteral("tab_2"));
-        groupBox = new QGroupBox(tab_2);
-        groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setGeometry(QRect(10, 20, 201, 104));
-        formLayout = new QFormLayout(groupBox);
-        formLayout->setSpacing(6);
-        formLayout->setContentsMargins(11, 11, 11, 11);
-        formLayout->setObjectName(QStringLiteral("formLayout"));
-        label_ip1 = new QLabel(groupBox);
-        label_ip1->setObjectName(QStringLiteral("label_ip1"));
-
-        formLayout->setWidget(0, QFormLayout::LabelRole, label_ip1);
-
-        lineEdit_ip1 = new QLineEdit(groupBox);
-        lineEdit_ip1->setObjectName(QStringLiteral("lineEdit_ip1"));
-
-        formLayout->setWidget(0, QFormLayout::FieldRole, lineEdit_ip1);
-
-        label_2 = new QLabel(groupBox);
-        label_2->setObjectName(QStringLiteral("label_2"));
-
-        formLayout->setWidget(1, QFormLayout::LabelRole, label_2);
-
-        lineEdit_user_1 = new QLineEdit(groupBox);
-        lineEdit_user_1->setObjectName(QStringLiteral("lineEdit_user_1"));
-
-        formLayout->setWidget(1, QFormLayout::FieldRole, lineEdit_user_1);
-
-        label_3 = new QLabel(groupBox);
-        label_3->setObjectName(QStringLiteral("label_3"));
-
-        formLayout->setWidget(2, QFormLayout::LabelRole, label_3);
-
-        lineEdit_password_1 = new QLineEdit(groupBox);
-        lineEdit_password_1->setObjectName(QStringLiteral("lineEdit_password_1"));
-        lineEdit_password_1->setEchoMode(QLineEdit::Password);
-
-        formLayout->setWidget(2, QFormLayout::FieldRole, lineEdit_password_1);
-
-        groupBox_2 = new QGroupBox(tab_2);
-        groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setGeometry(QRect(230, 20, 201, 104));
-        formLayout_2 = new QFormLayout(groupBox_2);
-        formLayout_2->setSpacing(6);
-        formLayout_2->setContentsMargins(11, 11, 11, 11);
-        formLayout_2->setObjectName(QStringLiteral("formLayout_2"));
-        label_ip2 = new QLabel(groupBox_2);
-        label_ip2->setObjectName(QStringLiteral("label_ip2"));
-
-        formLayout_2->setWidget(0, QFormLayout::LabelRole, label_ip2);
-
-        lineEdit_ip2 = new QLineEdit(groupBox_2);
-        lineEdit_ip2->setObjectName(QStringLiteral("lineEdit_ip2"));
-
-        formLayout_2->setWidget(0, QFormLayout::FieldRole, lineEdit_ip2);
-
-        label_5 = new QLabel(groupBox_2);
-        label_5->setObjectName(QStringLiteral("label_5"));
-
-        formLayout_2->setWidget(1, QFormLayout::LabelRole, label_5);
-
-        lineEdit_user_2 = new QLineEdit(groupBox_2);
-        lineEdit_user_2->setObjectName(QStringLiteral("lineEdit_user_2"));
-
-        formLayout_2->setWidget(1, QFormLayout::FieldRole, lineEdit_user_2);
-
-        label_4 = new QLabel(groupBox_2);
-        label_4->setObjectName(QStringLiteral("label_4"));
-
-        formLayout_2->setWidget(2, QFormLayout::LabelRole, label_4);
-
-        lineEdit_password_2 = new QLineEdit(groupBox_2);
-        lineEdit_password_2->setObjectName(QStringLiteral("lineEdit_password_2"));
-        lineEdit_password_2->setEchoMode(QLineEdit::Password);
-
-        formLayout_2->setWidget(2, QFormLayout::FieldRole, lineEdit_password_2);
-
-        tabWidget->addTab(tab_2, QString());
 
         verticalLayout->addWidget(tabWidget);
 
@@ -291,25 +217,14 @@ public:
     {
         mainwindowClass->setWindowTitle(QApplication::translate("mainwindowClass", "mainwindow", Q_NULLPTR));
         btn_switchCamera->setText(QApplication::translate("mainwindowClass", "\345\210\207\346\215\242\347\233\270\346\234\272", Q_NULLPTR));
+        label_ip1->setText(QApplication::translate("mainwindowClass", "\347\233\270\346\234\272\344\270\200IP:", Q_NULLPTR));
+        label_ip2->setText(QApplication::translate("mainwindowClass", "\347\233\270\346\234\272\344\272\214IP:", Q_NULLPTR));
         label->setText(QApplication::translate("mainwindowClass", "\345\275\225\345\203\217\344\277\235\345\255\230\350\267\257\345\276\204:", Q_NULLPTR));
         btnSelectPath->setText(QApplication::translate("mainwindowClass", "\344\277\256\346\224\271\350\267\257\345\276\204", Q_NULLPTR));
         btn_test->setText(QApplication::translate("mainwindowClass", "\347\233\270\346\234\272\347\212\266\346\200\201", Q_NULLPTR));
         btnRecord->setText(QApplication::translate("mainwindowClass", "\345\275\225\345\203\217", Q_NULLPTR));
         btnOpenPath->setText(QApplication::translate("mainwindowClass", "\346\211\223\345\274\200\346\226\207\344\273\266\345\244\271", Q_NULLPTR));
-        btnOpenVideo->setText(QApplication::translate("mainwindowClass", "\345\233\236\346\224\276", Q_NULLPTR));
-        btnClearRoi->setText(QApplication::translate("mainwindowClass", "\346\270\205\351\231\244ROI", Q_NULLPTR));
-        btnSelectRoi->setText(QApplication::translate("mainwindowClass", "\351\200\211\345\217\226ROI", Q_NULLPTR));
-        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("mainwindowClass", "\347\233\221\346\216\247", Q_NULLPTR));
-        groupBox->setTitle(QApplication::translate("mainwindowClass", "\347\233\270\346\234\272\344\270\200", Q_NULLPTR));
-        label_ip1->setText(QApplication::translate("mainwindowClass", "IP:", Q_NULLPTR));
-        label_2->setText(QApplication::translate("mainwindowClass", "\347\224\250\346\210\267\345\220\215:", Q_NULLPTR));
-        label_3->setText(QApplication::translate("mainwindowClass", "\345\257\206\347\240\201:", Q_NULLPTR));
-        lineEdit_password_1->setText(QString());
-        groupBox_2->setTitle(QApplication::translate("mainwindowClass", "\347\233\270\346\234\272\344\272\214", Q_NULLPTR));
-        label_ip2->setText(QApplication::translate("mainwindowClass", "IP:", Q_NULLPTR));
-        label_5->setText(QApplication::translate("mainwindowClass", "\347\224\250\346\210\267\345\220\215:", Q_NULLPTR));
-        label_4->setText(QApplication::translate("mainwindowClass", "\345\257\206\347\240\201:", Q_NULLPTR));
-        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("mainwindowClass", "\350\256\276\347\275\256", Q_NULLPTR));
+        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("mainwindowClass", "\345\212\237\350\203\275\346\240\217", Q_NULLPTR));
     } // retranslateUi
 
 };
