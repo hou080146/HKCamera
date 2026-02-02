@@ -19,6 +19,11 @@ public:
     static QString password1;
     static QString password2;
     static QString SavePath;
+    static bool ValidROI;
+    static double ROI_x;
+    static double ROI_y;
+    static double ROI_width;
+    static double ROI_height;
 
     static void readConfig();
     static void writeConfig();

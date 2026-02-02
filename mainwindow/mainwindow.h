@@ -22,6 +22,7 @@ public:
     void onBtnSelectPathClicked();
 private:
     void init();
+    void setROI();
 protected:
     // 可选：重写 closeEvent 以便更优雅地处理关闭
     void closeEvent(QCloseEvent* event) override;

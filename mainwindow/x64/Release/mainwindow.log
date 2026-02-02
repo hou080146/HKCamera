@@ -1,5 +1,9 @@
 ﻿   Qt/MSBuild: 3.4.1.0
    Qt: 5.9.0
-  videofilethread.cpp
-F:\hmy\mainwindow\mainwindow\videofilethread.cpp(119,6): warning C4067: 预处理器指令后有意外标记 - 应输入换行符
+  main.cpp
+  mainwindow.cpp
+F:\hmy\mainwindow\mainwindow\HCNetSDK.h(41172,1): warning C4010: 单行注释包含行继续符 (编译源文件 mainwindow.cpp)
+F:\hmy\mainwindow\mainwindow\HCNetSDK.h(41172,1): warning C4010: 单行注释包含行继续符 (编译源文件 main.cpp)
+  moc_mainwindow.cpp
+F:\hmy\mainwindow\mainwindow\HCNetSDK.h(41172,1): warning C4010: 单行注释包含行继续符
   mainwindow.vcxproj -> F:\hmy\mainwindow\x64\Release\mainwindow.exe

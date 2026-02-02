@@ -136,12 +136,10 @@ void VideoFileThread::run()
         }
 #endif
         if (isCropped) {
-            // 画一个青色(Cyan)的矩形框表示 ROI 区域
-            cv::rectangle(frame, currentROI, cv::Scalar(255, 255, 0), 2);
 
             // 在 ROI 左上角显示 "ROI Mode"
             cv::putText(frame, "ROI Area", cv::Point(currentROI.x, currentROI.y - 10),
-                cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 255, 0), 2);
+                cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 255, 0), 2);
         }
         // --- 绘制结果 ---
         for (auto& det : detections) {

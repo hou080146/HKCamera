@@ -13,6 +13,11 @@ QString AppConfig::password2 = "ck1234";
 QString AppConfig::SavePath = "D:Vedio";
 bool AppConfig::WriteFlag = false;
 bool AppConfig::Style = false;
+bool AppConfig::ValidROI;
+double AppConfig::ROI_x;
+double AppConfig::ROI_y;
+double AppConfig::ROI_width;
+double AppConfig::ROI_height;
 
 
 void AppConfig::readConfig()
@@ -29,6 +34,11 @@ void AppConfig::readConfig()
     AppConfig::password1 = set.value("password1").toString();
     AppConfig::password2 = set.value("password2").toString();
     AppConfig::SavePath = set.value("SavePath").toString();
+    AppConfig::ValidROI = set.value("ValidROI").toBool();
+    AppConfig::ROI_x = set.value("ROI_x").toDouble();
+    AppConfig::ROI_y = set.value("ROI_y").toDouble();
+    AppConfig::ROI_width = set.value("ROI_width").toDouble();
+    AppConfig::ROI_height = set.value("ROI_height").toDouble();
     set.endGroup();
 
     if (!AppConfig::checkIniFile(AppConfig::ConfigFile))
@@ -53,6 +63,11 @@ void AppConfig::writeConfig()
     set.setValue("password1", AppConfig::password1);
     set.setValue("password2", AppConfig::password2);
     set.setValue("SavePath", AppConfig::SavePath);
+    set.setValue("ValidROI", AppConfig::ValidROI);
+    set.setValue("ROI_x", AppConfig::ROI_x);
+    set.setValue("ROI_y", AppConfig::ROI_y);
+    set.setValue("ROI_width", AppConfig::ROI_width);
+    set.setValue("ROI_height", AppConfig::ROI_height);
     set.endGroup();
 }
 

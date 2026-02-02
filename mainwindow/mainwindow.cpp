@@ -44,6 +44,7 @@ mainwindow::mainwindow(QWidget *parent)
     connect(ui->btnClearRoi, &QPushButton::clicked, this, &mainwindow::onBtnClearRoiClicked);
     connect(m_glWidget, &GLVideoWidget::roiSelected, this, &mainwindow::onRoiSelected);
     
+    setROI();
     // 启动摄像头
     sendStatueBar("正在初始化相机线程...");
     
@@ -577,6 +578,16 @@ void mainwindow::onRoiSelected(QRect uiRect, QSize widgetSize)
     // 更新按钮状态 (与之前相同)
     ui->btnSelectRoi->setEnabled(false);
     ui->btnClearRoi->setEnabled(true);
+    ui->statusBar->showMessage(QString("ROI已设置: %1x%2").arg(cvRoi.width).arg(cvRoi.height));
+
+    if (true) {//待修改
+        AppConfig::ROI_x = cvRoi.x;
+        AppConfig::ROI_y = cvRoi.y;
+        AppConfig::ROI_width = cvRoi.width;
+        AppConfig::ROI_height = cvRoi.height;
+        AppConfig::ValidROI = true;
+        AppConfig::writeConfig();
+    }
 }
 
 // 点击【清除区域】
@@ -593,5 +604,37 @@ void mainwindow::onBtnClearRoiClicked()
     ui->btnSelectRoi->setEnabled(true);
     ui->btnClearRoi->setEnabled(false);
 
+    
+    AppConfig::ROI_x = 0;
+    AppConfig::ROI_y = 0;
+    AppConfig::ROI_width = 0;
+    AppConfig::ROI_height = 0;
+    AppConfig::ValidROI = false;
+    AppConfig::writeConfig();
+    
+
     ui->statusBar->showMessage("ROI 已清除，恢复全屏检测");
+}
+
+void mainwindow::setROI()
+{
+    bool valid = AppConfig::ValidROI;
+    double x = AppConfig::ROI_x;
+    double y = AppConfig::ROI_y;
+    double width = AppConfig::ROI_width;
+    double height = AppConfig::ROI_height;
+    if (valid == true && width > 0 && height > 0)
+    {
+        cv::Rect savedRoi(x, y, width, height);
+        m_cameraThread->setROI(savedRoi);
+        m_videoThread->setROI(savedRoi);
+
+        m_glWidget->setStaticROI(QRect(x, y, width, height));
+
+        // 3. 更新按钮状态
+        ui->btnSelectRoi->setEnabled(false);
+        ui->btnClearRoi->setEnabled(true);
+
+        ui->statusBar->showMessage("已自动加载 ROI 配置");
+    }
 }

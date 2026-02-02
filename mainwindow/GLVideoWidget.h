@@ -1,45 +1,54 @@
 #pragma once
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
-#include <QMutex>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QImage>
+#include <QMutex>
 
-class GLVideoWidget :
-    public QOpenGLWidget, protected QOpenGLFunctions
+class GLVideoWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
     Q_OBJECT
 public:
-    explicit GLVideoWidget(QWidget *parent = nullptr);
+    explicit GLVideoWidget(QWidget* parent = nullptr);
     ~GLVideoWidget();
 
-    // 清除选区
+    void updateFrame(const QImage& img);
     void clearROI();
     void setDrawingMode(bool enable);
-public slots:
-    void updateFrame(const QImage &img);
+
+    // 【修改】直接传入视频真实分辨率下的坐标 (如 1920x1088 下的 rect)
+    void setStaticROI(QRect sourceRect);
 
 signals:
-    // 当鼠标松开确定选区后，发送此信号
-    // rect: UI上的矩形, widgetSize: 控件当时的大小
     void roiSelected(QRect rect, QSize widgetSize);
 
 protected:
     void initializeGL() override;
-    void paintGL() override;
     void resizeGL(int w, int h) override;
-    void paintEvent(QPaintEvent* event) override;
+    void paintGL() override;     // 专门负责画视频
+    void paintEvent(QPaintEvent* event) override; // 负责调度和画框
+
+    // 鼠标事件
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
-    QImage m_frame;       // 最新帧（RGB）
-    GLuint m_textureId;   // OpenGL 纹理
-    QMutex m_mutex;
-    QPoint m_startPoint;      // 鼠标按下的起点
-    QRect m_selectionRect;    // 当前画的框
-    bool m_isDrawing = false; // 是否正在拖拽
-    bool m_canDraw = false;       //是否允许画框
-};
+    // OpenGL 资源
+    GLuint m_textureId = 0;
 
+    // 数据
+    QImage m_frame;
+    QMutex m_mutex;
+
+    // ROI 逻辑
+    QPoint m_startPoint;      // 鼠标起点 (UI坐标)
+    QRect m_currentUiRect;    // 当前正在拖拽的红框 (UI坐标)
+
+    // 【核心】存储真实的 ROI (相对于视频源 1920x1088)
+    QRect m_sourceRoiRect;
+
+    bool m_isDrawing = false;
+    bool m_canDraw = false;
+};
