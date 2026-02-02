@@ -6,6 +6,7 @@
 #include <QImage>
 #include <opencv2/opencv.hpp>
 #include "YoloV5Detector.h"
+#include <QElapsedTimer>
 
 class VideoFileThread  : public QThread
 {
@@ -47,6 +48,10 @@ private:
     QMutex m_roiMutex;
     cv::Rect m_roiRect;
     bool m_useROI = false;
+
+    //采样计时器
+    QElapsedTimer m_reportTimer;
+
 
     // 类别名称
     const std::vector<std::string> m_classNames = {

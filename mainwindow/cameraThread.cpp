@@ -3,6 +3,7 @@
 #include <QImage> 
 #include <QDateTime>
 #include <QDir>
+#include "reportwriter.h"
 
 std::vector<std::string> class_names = {
     "person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train",
@@ -59,15 +60,9 @@ void CameraThread::run()
     m_camera = new HikCamera();    //2.创建HikCamera对象--->转到hikcamera
     m_writer = new cv::VideoWriter();
     // 创建 YOLO 对象
-    // 加载 YOLO (确保 .onnx 文件路径正确)
     m_detector = new YoloV5Detector("yolov5s.onnx", cv::Size(640, 640), true);
-    // 连接 YOLO 检测完成信号到 CameraThread::newFrame
-    //connect(m_yolo, &YoloProcessor::processedFrame, this, &CameraThread::newFrame);
     //用于显示状态
     connect(m_camera, &HikCamera::errorOccurred, this, [this](const QString& err) { emit errorMessage(err); });
-
-    //14（2）.信号传递到CameraThread::newFrame
-    //connect(m_camera, &HikCamera::frameUpdated, this, &CameraThread::newFrame);
 
     QString ip, user, pwd;
     int port;
@@ -86,9 +81,8 @@ void CameraThread::run()
         m_detector = nullptr;
         return;
         }
-
+    m_reportTimer.start(); //报表采样计时器
     m_camera->startPreview();
-    // 3. 开始处理循环 (替代原来的 exec())
     cv::Mat yuvFrame;
     //bgr原图
     cv::Mat bgrFrame;
@@ -203,7 +197,42 @@ void CameraThread::run()
                 cv::putText(bgrFrame, label, cv::Point(det.box.x, det.box.y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0, 255, 0), 2);
             }
 
+            // 1. 时间检查：是否达到采样间隔 (例如 1秒保存一次)
+            if (m_reportTimer.elapsed() > ReportWriter::m_reportInterval) {
 
+                // 2. 检查是否有需要保存的目标
+                // 策略：保存当前帧所有检测到的目标，或者置信度最高的目标
+                if (!detections.empty()) {
+
+                    // 这里演示：只保存第一个检测到的，或者你可以遍历保存所有
+                    // 为了演示简单，我们取第一个
+                    const auto& det = detections[0];
+
+                    // 3. 构造数据包
+                    ReportItem item;
+                    item.timestamp = QDateTime::currentDateTime();
+
+                    if (det.class_id < class_names.size()) {
+                        item.className = QString::fromStdString(class_names[det.class_id]);
+                    }
+                    else {
+                        item.className = "Unknown";
+                    }
+
+                    item.confidence = det.confidence;
+
+                    // 【关键】必须 Clone (深拷贝)！
+                    // 因为 bgrFrame 在下一次循环会被覆盖，而 Writer 线程可能还没来得及写盘
+                    // 保存画了框的图，还是纯净图？这里保存的是画了框的(因为前面draw过了)
+                    item.img = bgrFrame.clone();
+
+                    // 4. 推送到后台队列
+                    ReportWriter::instance()->pushItem(item);
+
+                    // 重置计时器
+                    m_reportTimer.restart();
+                }
+            }
             
 
 

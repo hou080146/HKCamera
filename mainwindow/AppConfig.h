@@ -24,9 +24,11 @@ public:
     static double ROI_y;
     static double ROI_width;
     static double ROI_height;
+    static int reportInterval;
 
     static void readConfig();
     static void writeConfig();
+
 
     static bool checkIniFile(const QString &iniFile);
 };

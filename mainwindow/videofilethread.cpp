@@ -1,5 +1,5 @@
 #include "videofilethread.h"
-
+#include "reportwriter.h"
 #include <QDebug>
 #include <QElapsedTimer>
 
@@ -65,7 +65,7 @@ void VideoFileThread::run()
 
     cv::Mat frame;
     QElapsedTimer timer; // 用于计算处理耗时
-
+    m_reportTimer.start(); // 启动计时器
     while (!m_stopFlag) {
         timer.restart(); // 开始计时
 
@@ -159,18 +159,51 @@ void VideoFileThread::run()
             cv::putText(frame, label, cv::Point(det.box.x, det.box.y - 5),
                 cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0, 255, 0), 2);
         }
+        //采样保存到报表
+        if (m_reportTimer.elapsed() > ReportWriter::m_reportInterval) {
 
+            // 2. 检查是否有需要保存的目标
+            // 策略：保存当前帧所有检测到的目标，或者置信度最高的目标
+            if (!detections.empty()) {
+
+                // 这里演示：只保存第一个检测到的，或者你可以遍历保存所有
+                // 为了演示简单，我们取第一个
+                const auto& det = detections[0];
+
+                // 3. 构造数据包
+                ReportItem item;
+                item.timestamp = QDateTime::currentDateTime();
+
+                if (det.class_id < m_classNames.size()) {
+                    item.className = QString::fromStdString(m_classNames[det.class_id]);
+                }
+                else {
+                    item.className = "Unknown";
+                }
+
+                item.confidence = det.confidence;
+
+                //深拷贝  bgrFrame 在下一次循环会被覆盖，而 Writer 线程可能还没来得及写盘
+                item.img = frame.clone();
+
+                // 4. 推送到后台队列
+                ReportWriter::instance()->pushItem(item);
+
+                // 重置计时器
+                m_reportTimer.restart();
+            }
+        }
         // --- 转 QImage 发送 ---
         cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
         QImage img((const uchar*)frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
         emit frameReady(img.copy());
 
-        // --- 帧率控制 (关键) ---
+        // --- 帧率控制 ---
         // 计算处理这一帧花了多少毫秒
         qint64 processingTime = timer.elapsed();
 
         // 如果处理太快（小于帧间隔），就需要睡一会儿，保证播放速度正常
-        // 如果处理太慢（大于帧间隔），就不睡了，全速追赶
+        // 如果处理太慢（大于帧间隔），就不睡了
         int sleepTime = frameDelayMs - processingTime;
         if (sleepTime > 0) {
             QThread::msleep(sleepTime);

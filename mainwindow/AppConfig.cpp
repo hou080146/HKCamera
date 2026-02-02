@@ -13,11 +13,12 @@ QString AppConfig::password2 = "ck1234";
 QString AppConfig::SavePath = "D:Vedio";
 bool AppConfig::WriteFlag = false;
 bool AppConfig::Style = false;
-bool AppConfig::ValidROI;
-double AppConfig::ROI_x;
-double AppConfig::ROI_y;
-double AppConfig::ROI_width;
-double AppConfig::ROI_height;
+bool AppConfig::ValidROI = false;
+double AppConfig::ROI_x = 0.0;
+double AppConfig::ROI_y = 0.0;
+double AppConfig::ROI_width = 0.0;
+double AppConfig::ROI_height = 0.0;
+int AppConfig::reportInterval = 1000;
 
 
 void AppConfig::readConfig()
@@ -39,6 +40,7 @@ void AppConfig::readConfig()
     AppConfig::ROI_y = set.value("ROI_y").toDouble();
     AppConfig::ROI_width = set.value("ROI_width").toDouble();
     AppConfig::ROI_height = set.value("ROI_height").toDouble();
+    AppConfig::reportInterval = set.value("reportInterval").toInt();
     set.endGroup();
 
     if (!AppConfig::checkIniFile(AppConfig::ConfigFile))

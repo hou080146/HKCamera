@@ -3,6 +3,7 @@
 #include <QThread>
 #include "hikcamera.h"
 #include "YoloV5Detector.h"
+#include <QElapsedTimer>
 
 
 class CameraThread : public QThread
@@ -51,4 +52,7 @@ private:
     QMutex m_roiMutex;
     cv::Rect m_roiRect; // 存储映射到视频真实分辨率的 ROI
     bool m_useROI = false;
+
+    //报表生成//采样计时器
+    QElapsedTimer m_reportTimer;
 };

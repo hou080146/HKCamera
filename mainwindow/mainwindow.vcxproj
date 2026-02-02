@@ -102,6 +102,7 @@
     <ClCompile Include="AppConfig.cpp" />
     <ClCompile Include="appinit.cpp" />
     <ClCompile Include="GLVideoWidget.cpp" />
+    <ClCompile Include="reportwriter.cpp" />
     <ClCompile Include="videofilethread.cpp" />
     <ClCompile Include="YoloV5Detector.cpp" />
     <QtRcc Include="mainwindow.qrc" />
@@ -116,6 +117,7 @@
     <QtMoc Include="cameraThread.h" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="reportwriter.h" />
     <QtMoc Include="videofilethread.h" />
     <QtMoc Include="YoloV5Detector.h" />
     <QtMoc Include="GLVideoWidget.h" />
