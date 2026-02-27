@@ -9,6 +9,10 @@
 #include <QFutureWatcher>   //用于异步监控
 #include "HCNetSDK.h" 
 #include "videofilethread.h"
+#include "hectometerClient.h"
+#include "SerialPortComm.h"
+#include "EncoderMileageMgr.h"
+#include "WarningPointMgr.h"
 
 class mainwindow : public QMainWindow
 {
@@ -50,6 +54,17 @@ private slots:
     //清除选区，恢复全屏检测
     void onBtnClearRoiClicked();
     void onBtnSelectRoiClicked();
+
+	void onMileageConnected();
+    void onMileageDisconnected();
+    void onMileageError(const QString& error);
+    void onMileageInfoReceived(const MileageInfo& info);
+    void onBtnConnectMileageClicked();
+
+    void onMileageUpdated(const MileageStatus& status);
+	void onWarningTriggered(const WarningPoint& ponit, double distance);
+
+    void onBtnPackClicked();
 private:
     Ui::mainwindowClass *ui;
     //海康监控
@@ -70,4 +85,11 @@ private:
     QFutureWatcher<QString> m_testWatcher;
     QString m_savepath = "";
     
+    hectometerClient* m_mileageClient;
+    EncoderMileageMgr* m_encoder;
+    SerialPortComm* m_port;
+    void autoConnectMileageServer();
+    void autoConnectSerialPort();
+
+    WarningPointMgr* m_warningPoint;
 };

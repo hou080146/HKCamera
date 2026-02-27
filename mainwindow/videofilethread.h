@@ -7,13 +7,14 @@
 #include <opencv2/opencv.hpp>
 #include "YoloV5Detector.h"
 #include <QElapsedTimer>
+#include "EncoderMileageMgr.h"
 
 class VideoFileThread  : public QThread
 {
 	Q_OBJECT
 
 public:
-	explicit VideoFileThread(QObject *parent = nullptr);
+	explicit VideoFileThread(QObject *parent = nullptr, EncoderMileageMgr* encodermileagemgr = nullptr);
 	~VideoFileThread();
     // 设置视频文件路径
     void setVideoPath(const QString& path);
@@ -37,6 +38,7 @@ protected:
 private:
     QString m_videoPath;
     YoloV5Detector* m_detector = nullptr;
+    EncoderMileageMgr* m_encoderMileageMgr = nullptr;
 
     QMutex m_mutex;
     bool m_stopFlag = false;

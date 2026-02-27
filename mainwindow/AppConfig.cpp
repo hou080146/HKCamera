@@ -18,7 +18,24 @@ double AppConfig::ROI_x = 0.0;
 double AppConfig::ROI_y = 0.0;
 double AppConfig::ROI_width = 0.0;
 double AppConfig::ROI_height = 0.0;
+
+bool AppConfig::ValidROI_2 = false;
+double AppConfig::ROI_x_2 = 0.0;
+double AppConfig::ROI_y_2 = 0.0;
+double AppConfig::ROI_width_2 = 0.0;
+double AppConfig::ROI_height_2 = 0.0;
+
 int AppConfig::reportInterval = 1000;
+
+QString AppConfig::startMileage;
+int AppConfig::upOrDown;
+QString AppConfig::MileageServerIP;
+int AppConfig::MileageServerPort;
+
+QString AppConfig::SerialPortName = "COM1";
+int AppConfig::SerialBaudRate = 115200;
+bool AppConfig::AutoConnectMileageServer = true;
+bool AppConfig::AutoConnectSerialPort = true;
 
 
 void AppConfig::readConfig()
@@ -35,12 +52,26 @@ void AppConfig::readConfig()
     AppConfig::password1 = set.value("password1").toString();
     AppConfig::password2 = set.value("password2").toString();
     AppConfig::SavePath = set.value("SavePath").toString();
+
     AppConfig::ValidROI = set.value("ValidROI").toBool();
     AppConfig::ROI_x = set.value("ROI_x").toDouble();
     AppConfig::ROI_y = set.value("ROI_y").toDouble();
     AppConfig::ROI_width = set.value("ROI_width").toDouble();
     AppConfig::ROI_height = set.value("ROI_height").toDouble();
+
+    AppConfig::ValidROI_2 = set.value("ValidROI_2").toBool();
+    AppConfig::ROI_x_2 = set.value("ROI_x_2").toDouble();
+    AppConfig::ROI_y_2 = set.value("ROI_y_2").toDouble();
+    AppConfig::ROI_width_2 = set.value("ROI_width_2").toDouble();
+    AppConfig::ROI_height_2 = set.value("ROI_height_2").toDouble();
+
+    //日志采集间隔
     AppConfig::reportInterval = set.value("reportInterval").toInt();
+
+    AppConfig::startMileage = set.value("startMileage").toString();;
+    AppConfig::upOrDown = set.value("upOrDown").toInt();;
+    AppConfig::MileageServerIP = set.value("MileageServerIP").toString();;
+    AppConfig::MileageServerPort = set.value("MileageServerPort").toInt();;
     set.endGroup();
 
     if (!AppConfig::checkIniFile(AppConfig::ConfigFile))
@@ -65,11 +96,23 @@ void AppConfig::writeConfig()
     set.setValue("password1", AppConfig::password1);
     set.setValue("password2", AppConfig::password2);
     set.setValue("SavePath", AppConfig::SavePath);
+
     set.setValue("ValidROI", AppConfig::ValidROI);
     set.setValue("ROI_x", AppConfig::ROI_x);
     set.setValue("ROI_y", AppConfig::ROI_y);
     set.setValue("ROI_width", AppConfig::ROI_width);
     set.setValue("ROI_height", AppConfig::ROI_height);
+
+    set.setValue("ValidROI_2", AppConfig::ValidROI_2);
+    set.setValue("ROI_x_2", AppConfig::ROI_x_2);
+    set.setValue("ROI_y_2", AppConfig::ROI_y_2);
+    set.setValue("ROI_width_2", AppConfig::ROI_width_2);
+    set.setValue("ROI_height_2", AppConfig::ROI_height_2);
+
+    set.setValue("startMileage", AppConfig::startMileage);
+    set.setValue("upOrDown", AppConfig::upOrDown);
+    set.setValue("MileageServerIP", AppConfig::MileageServerIP);
+    set.setValue("MileageServerPort", AppConfig::MileageServerPort);
     set.endGroup();
 }
 

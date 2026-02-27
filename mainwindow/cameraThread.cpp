@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QDir>
 #include "reportwriter.h"
+#include "EncoderMileageMgr.h"
 
 std::vector<std::string> class_names = {
     "person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train",
@@ -37,7 +38,7 @@ CameraThread::~CameraThread()
 }
 
 void CameraThread::initialize(const QString& ip, const QString& user,
-    const QString& pwd, int port)
+    const QString& pwd, int port, EncoderMileageMgr* mileageService)
 {
     QMutexLocker locker(&m_mutex);
     m_ip = ip;
@@ -45,6 +46,7 @@ void CameraThread::initialize(const QString& ip, const QString& user,
     m_pwd = pwd;
     m_port = port;
     m_stopFlag = false;
+    m_encoderMileageMgr = mileageService;
 }
 
 void CameraThread::stopCapture()
@@ -60,7 +62,8 @@ void CameraThread::run()
     m_camera = new HikCamera();    //2.创建HikCamera对象--->转到hikcamera
     m_writer = new cv::VideoWriter();
     // 创建 YOLO 对象
-    m_detector = new YoloV5Detector("yolov5s.onnx", cv::Size(640, 640), true);
+    //m_detector = new YoloV5Detector("yolov5s.onnx", cv::Size(640, 640), true);
+    m_detector = new YoloV5Detector("best.onnx", cv::Size(640, 640), true);
     //用于显示状态
     connect(m_camera, &HikCamera::errorOccurred, this, [this](const QString& err) { emit errorMessage(err); });
 
@@ -86,6 +89,7 @@ void CameraThread::run()
     cv::Mat yuvFrame;
     //bgr原图
     cv::Mat bgrFrame;
+    int reportInterval = ReportWriter::m_reportInterval;
 
     while (!m_stopFlag) {
         // A. 主动去取最新帧
@@ -180,7 +184,7 @@ void CameraThread::run()
 
             // C. YOLO 推理
             //    直接把 detectFrame 传进去
-            auto detections = m_detector->detect(detectFrame, 0.45f, 0.45f);
+            auto detections = m_detector->detect(detectFrame, 0.80f, 0.45f);
 
             // D. 绘制框
             for (auto& det : detections) {
@@ -193,12 +197,13 @@ void CameraThread::run()
                 cv::putText(bgrFrame, "ROI Area", cv::Point(currentROI.x, currentROI.y - 10),
                     cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 255, 0), 2);
                 cv::rectangle(bgrFrame, det.box, cv::Scalar(0, 255, 0), 2);
-                std::string label = class_names[det.class_id] + ": " + std::to_string((int)(det.confidence * 100)) + "%";
+                //std::string label = class_names[det.class_id] + ": " + std::to_string((int)(det.confidence * 100)) + "%";
+                std::string label = "sundries: " + std::to_string((int)(det.confidence * 100)) + "%";
                 cv::putText(bgrFrame, label, cv::Point(det.box.x, det.box.y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0, 255, 0), 2);
             }
 
-            // 1. 时间检查：是否达到采样间隔 (例如 1秒保存一次)
-            if (m_reportTimer.elapsed() > ReportWriter::m_reportInterval) {
+            // 1. 时间检查：是否达到采样间隔
+            if (m_reportTimer.elapsed() > reportInterval) {
 
                 // 2. 检查是否有需要保存的目标
                 // 策略：保存当前帧所有检测到的目标，或者置信度最高的目标
@@ -212,18 +217,21 @@ void CameraThread::run()
                     ReportItem item;
                     item.timestamp = QDateTime::currentDateTime();
 
+                    double currentMileage = 0.0;
+                    m_encoderMileageMgr->GetCurrentMileage(currentMileage);
+                    item.mileage = currentMileage;
+#if 0:
                     if (det.class_id < class_names.size()) {
                         item.className = QString::fromStdString(class_names[det.class_id]);
                     }
                     else {
                         item.className = "Unknown";
                     }
-
+#endif
+                    item.className = "sundries";//类别名称统一称为杂物
                     item.confidence = det.confidence;
 
-                    // 【关键】必须 Clone (深拷贝)！
-                    // 因为 bgrFrame 在下一次循环会被覆盖，而 Writer 线程可能还没来得及写盘
-                    // 保存画了框的图，还是纯净图？这里保存的是画了框的(因为前面draw过了)
+                    // 深拷贝 因为 bgrFrame 在下一次循环会被覆盖，而 Writer 线程可能还没来得及写盘
                     item.img = bgrFrame.clone();
 
                     // 4. 推送到后台队列

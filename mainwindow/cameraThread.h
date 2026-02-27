@@ -4,7 +4,7 @@
 #include "hikcamera.h"
 #include "YoloV5Detector.h"
 #include <QElapsedTimer>
-
+#include "EncoderMileageMgr.h"
 
 class CameraThread : public QThread
 {
@@ -14,7 +14,7 @@ public:
     ~CameraThread();
     //void toggleRecording(); // ÇÐ»»Â¼Ïñ×´Ì¬£¨¿ª/¹Ø£©
     void initialize(const QString& ip, const QString& user,
-        const QString& pwd, int port = 8000);
+        const QString& pwd, int port = 8000, EncoderMileageMgr* mileageService = nullptr);
     void stopCapture();
 
     //Â¼Ïñ
@@ -35,6 +35,7 @@ protected:
 private:
     HikCamera* m_camera = nullptr;
     YoloV5Detector* m_detector = nullptr;
+    EncoderMileageMgr* m_encoderMileageMgr = nullptr;
 
     QString m_ip;
     QString m_user;

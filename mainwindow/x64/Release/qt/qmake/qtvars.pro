@@ -1,5 +1,5 @@
 CONFIG += no_fixpath
-QT = core gui widgets concurrent
+QT = core network gui widgets serialport concurrent
         
         
       

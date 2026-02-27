@@ -3,8 +3,10 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-VideoFileThread::VideoFileThread(QObject* parent) : QThread(parent)
+
+VideoFileThread::VideoFileThread(QObject* parent, EncoderMileageMgr* encodermileagemgr) : QThread(parent)
 {
+    m_encoderMileageMgr = encodermileagemgr;
 }
 
 VideoFileThread::~VideoFileThread()
@@ -30,7 +32,8 @@ void VideoFileThread::run()
     m_stopFlag = false;
 
     // 1. 初始化 YOLO
-    m_detector = new YoloV5Detector("yolov5s.onnx", cv::Size(640, 640), true);
+    //m_detector = new YoloV5Detector("yolov5s.onnx", cv::Size(640, 640), true);
+    m_detector = new YoloV5Detector("best.onnx", cv::Size(640, 640), true);
 
     // 2. 打开视频文件
     // 【注意】Windows下 OpenCV 处理中文路径建议使用 toLocal8Bit
@@ -66,6 +69,7 @@ void VideoFileThread::run()
     cv::Mat frame;
     QElapsedTimer timer; // 用于计算处理耗时
     m_reportTimer.start(); // 启动计时器
+    int reportInterval = ReportWriter::m_reportInterval;
     while (!m_stopFlag) {
         timer.restart(); // 开始计时
 
@@ -113,7 +117,7 @@ void VideoFileThread::run()
 
 
         // --- YOLO 检测 ---
-        auto detections = m_detector->detect(detectFrame, 0.45f, 0.45f);
+        auto detections = m_detector->detect(detectFrame, 0.80f, 0.45f);
         
 
 #if 0:
@@ -150,17 +154,17 @@ void VideoFileThread::run()
             }
             cv::rectangle(frame, det.box, cv::Scalar(0, 255, 0), 2);
 
-            std::string label = "Unkown";
-            if (det.class_id < m_classNames.size()) {
-                label = m_classNames[det.class_id];
-            }
+            std::string label = "sundries";
+            //if (det.class_id < m_classNames.size()) {
+            //    label = m_classNames[det.class_id];
+            //}
             label += ": " + std::to_string((int)(det.confidence * 100)) + "%";
 
             cv::putText(frame, label, cv::Point(det.box.x, det.box.y - 5),
                 cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0, 255, 0), 2);
         }
         //采样保存到报表
-        if (m_reportTimer.elapsed() > ReportWriter::m_reportInterval) {
+        if (m_reportTimer.elapsed() > reportInterval) {
 
             // 2. 检查是否有需要保存的目标
             // 策略：保存当前帧所有检测到的目标，或者置信度最高的目标
@@ -174,12 +178,19 @@ void VideoFileThread::run()
                 ReportItem item;
                 item.timestamp = QDateTime::currentDateTime();
 
-                if (det.class_id < m_classNames.size()) {
-                    item.className = QString::fromStdString(m_classNames[det.class_id]);
+                double currentMileage = 0.0;
+                m_encoderMileageMgr->GetCurrentMileage(currentMileage);
+                item.mileage = currentMileage;
+
+#if 0:
+                if (det.class_id < class_names.size()) {
+                    item.className = QString::fromStdString(class_names[det.class_id]);
                 }
                 else {
                     item.className = "Unknown";
                 }
+#endif
+                item.className = "sundries";//类别名称统一称为杂物
 
                 item.confidence = det.confidence;
 

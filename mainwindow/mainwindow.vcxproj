@@ -35,7 +35,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>5.9chart</QtInstall>
-    <QtModules>core;gui;widgets;concurrent</QtModules>
+    <QtModules>core;network;gui;widgets;serialport;concurrent</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -72,6 +72,7 @@
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir)\GeneratedFiles\ui;G:\hmy\onnxruntime-win-x64-gpu-1.14.1\onnxruntime-win-x64-gpu-1.14.1\include;G:\hmy\Opencv_Build\build\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WarningLevel>Level3</WarningLevel>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -90,20 +91,25 @@
     <ClCompile>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DebugInformationFormat>None</DebugInformationFormat>
-      <Optimization>MaxSpeed</Optimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppConfig.cpp" />
     <ClCompile Include="appinit.cpp" />
+    <ClCompile Include="EncoderMileageMgr.cpp" />
     <ClCompile Include="GLVideoWidget.cpp" />
+    <ClCompile Include="hectometerClient.cpp" />
+    <ClCompile Include="MileageSharedMemory.cpp" />
     <ClCompile Include="reportwriter.cpp" />
+    <ClCompile Include="SerialPortComm.cpp" />
     <ClCompile Include="videofilethread.cpp" />
+    <ClCompile Include="WarningPointMgr.cpp" />
     <ClCompile Include="YoloV5Detector.cpp" />
     <QtRcc Include="mainwindow.qrc" />
     <QtUic Include="mainwindow.ui" />
@@ -117,14 +123,19 @@
     <QtMoc Include="cameraThread.h" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="SerialPortComm.h" />
+    <QtMoc Include="WarningPointMgr.h" />
     <QtMoc Include="reportwriter.h" />
     <QtMoc Include="videofilethread.h" />
     <QtMoc Include="YoloV5Detector.h" />
     <QtMoc Include="GLVideoWidget.h" />
     <ClInclude Include="AppConfig.h" />
     <QtMoc Include="appinit.h" />
+    <QtMoc Include="EncoderMileageMgr.h" />
     <ClInclude Include="HCNetSDK.h" />
     <QtMoc Include="hikcamera.h" />
+    <QtMoc Include="hectometerClient.h" />
+    <ClInclude Include="MileageSharedMemory.h" />
     <ClInclude Include="plaympeg4.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

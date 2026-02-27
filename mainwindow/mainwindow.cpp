@@ -7,9 +7,12 @@
 #include <QtConcurrent>
 #include <QFileDialog>      // 【新增】文件对话框
 #include <QDesktopServices> // 【新增】打开系统文件夹
+#include <QMessageBox>
+#include "reportwriter.h"
 
 mainwindow::mainwindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::mainwindowClass)
+    , m_mileageClient(nullptr)
 {
     ui->setupUi(this);
 
@@ -21,11 +24,15 @@ mainwindow::mainwindow(QWidget *parent)
         qDebug() << "sdk初始化出错，错误提示：" << NET_DVR_GetLastError;
     }
 
-    m_videoThread = new VideoFileThread(this);
+    
     m_cameraThread = new CameraThread(this);
     // 用 OpenGL 控件替换 UI 上的 Video
     m_glWidget = new GLVideoWidget(this);
-
+    m_mileageClient = new hectometerClient();
+    m_encoder = new EncoderMileageMgr();
+    m_videoThread = new VideoFileThread(this, m_encoder);
+    m_port = new SerialPortComm();
+    m_warningPoint = new WarningPointMgr();
     //UI初始化
     init();
     
@@ -44,12 +51,23 @@ mainwindow::mainwindow(QWidget *parent)
     connect(ui->btnClearRoi, &QPushButton::clicked, this, &mainwindow::onBtnClearRoiClicked);
     connect(m_glWidget, &GLVideoWidget::roiSelected, this, &mainwindow::onRoiSelected);
     
+	connect(m_mileageClient, &hectometerClient::connected, this, &mainwindow::onMileageConnected);
+    connect(m_mileageClient, &hectometerClient::disconnected, this, &mainwindow::onMileageDisconnected);
+    connect(m_mileageClient, &hectometerClient::errorOccurred, this, &mainwindow::onMileageError);
+    connect(m_mileageClient, &hectometerClient::mileageInfoReceived, this, &mainwindow::onMileageInfoReceived);
+
+    connect(m_encoder, &EncoderMileageMgr::mileageUpdated, this, &mainwindow::onMileageUpdated);
+
+    connect(m_warningPoint, &WarningPointMgr::warningTriggered, this, &mainwindow::onWarningTriggered);
+	autoConnectMileageServer();
+    autoConnectSerialPort();
+	
     setROI();
     // 启动摄像头
     sendStatueBar("正在初始化相机线程...");
     
     onBtnTestClicked();
-    m_cameraThread->initialize(IP_1, user1, password1); 
+    m_cameraThread->initialize(IP_1, user1, password1, 8000, m_encoder);
     m_cameraThread->start();
 }
 
@@ -84,6 +102,19 @@ mainwindow::~mainwindow()
             }
         }
     }
+	if (m_mileageClient) 
+        m_mileageClient->disconnectServer();
+
+    if (m_port && m_port->isOpen())
+        m_port->closePort();
+
+    //ReportWriter::instance()->stop();
+    //ReportWriter::instance()->wait();
+
+    // 3. 【关键】执行打包
+    // 此时文件句柄已释放，数据完整，可以安全打包
+    qDebug() << "正在执行退出前打包...";
+    //ReportWriter::instance()->packCurrentSession();
 
     // 4. 销毁 UI
     // 此时线程已死，不会再有 frameReady 信号发给 glWidget，安全销毁
@@ -179,6 +210,10 @@ void mainwindow::init()
     ui->lineEdit_user_2->setText(user2);
     ui->lineEdit_password_1->setText(password1);
     ui->lineEdit_password_2->setText(password2);
+    ui->lineEditStartMileage->setText(AppConfig::startMileage);
+    ui->upOrDownCom->setCurrentIndex(AppConfig::upOrDown);
+    ui->lineEdit_mileageIP->setText(AppConfig::MileageServerIP);
+    ui->spinBox_mileagePort->setValue(AppConfig::MileageServerPort);
 
     // 录像保存路径
     m_savepath = ensureValidVideoPath(AppConfig::SavePath);
@@ -197,6 +232,9 @@ void mainwindow::init()
         this, &mainwindow::saveConfig);
     connect(ui->lineEdit_password_2, &QLineEdit::textEdited,
         this, &mainwindow::saveConfig);
+	connect(ui->lineEdit_mileageIP, &QLineEdit::textEdited,this, &mainwindow::saveConfig);
+    connect(ui->spinBox_mileagePort, QOverload<int>::of(&QSpinBox::valueChanged), this, &mainwindow::saveConfig);
+    connect(ui->upOrDownCom, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &mainwindow::saveConfig);
     connect(ui->btn_switchCamera, &QPushButton::clicked,
         this, &mainwindow::switchCamear);
     connect(ui->btn_test, &QPushButton::clicked,
@@ -208,6 +246,9 @@ void mainwindow::init()
     connect(ui->btnSelectPath, &QPushButton::clicked, this, &mainwindow::onBtnSelectPathClicked);
     // 连接打开文件夹按钮
     connect(ui->btnOpenPath, &QPushButton::clicked, this, &mainwindow::onBtnOpenPathClicked);
+    connect(ui->btn_connectMileage, &QPushButton::clicked, this, &mainwindow::onBtnConnectMileageClicked);
+
+    connect(ui->btnPack, &QPushButton::clicked, this, &mainwindow::onBtnPackClicked);//打包函数
 
     if (ui->videoLayout) {
         ui->videoLayout->addWidget(m_glWidget);
@@ -227,6 +268,12 @@ void mainwindow::init()
         ui->btnRecord->setEnabled(true);
         ui->btn_switchCamera->setText("切换相机"); // 恢复原始文字
         });
+
+    QString csvPath = QCoreApplication::applicationDirPath() + "/warningPoint.csv";
+    if (m_warningPoint->loadWarningPoints(csvPath)) 
+        ui->textBrowser->append("成功载入预警点配置文件");
+    else
+        ui->textBrowser->append("载入预警点配置文件失败");
 }
 
 //提示错误
@@ -257,6 +304,10 @@ void mainwindow::saveConfig()
     AppConfig::password1 = ui->lineEdit_password_1->text();
     AppConfig::password2 = ui->lineEdit_password_2->text();
     AppConfig::SavePath = ui->lineEditSavePath->text();
+    AppConfig::startMileage = ui->lineEditStartMileage->text();
+    AppConfig::upOrDown = ui->upOrDownCom->currentIndex();
+    AppConfig::MileageServerIP = ui->lineEdit_mileageIP->text();
+    AppConfig::MileageServerPort = ui->spinBox_mileagePort->value();
     AppConfig::writeConfig();
 }
 
@@ -290,19 +341,19 @@ void mainwindow::switchCamear()
     }
     if (flagCamear == false)
     {
-        m_cameraThread->initialize(IP_2, user2, password2);
+        m_cameraThread->initialize(IP_2, user2, password2, 8000, m_encoder);
         m_cameraThread->start();
         sendStatueBar("正在初始化相机线程...");
         flagCamear = true;
     }
     else
     {
-        m_cameraThread->initialize(IP_1, user1, password1);
+        m_cameraThread->initialize(IP_1, user1, password1, 8000, m_encoder);
         m_cameraThread->start();
         sendStatueBar("正在初始化相机线程...");
         flagCamear = false;
     }
-
+    setROI();//切换ROI  通过flagCamear确定用哪个 相机配置
 }
 
 
@@ -580,14 +631,22 @@ void mainwindow::onRoiSelected(QRect uiRect, QSize widgetSize)
     ui->btnClearRoi->setEnabled(true);
     ui->statusBar->showMessage(QString("ROI已设置: %1x%2").arg(cvRoi.width).arg(cvRoi.height));
 
-    if (true) {//待修改
+    if (flagCamear == true) {
         AppConfig::ROI_x = cvRoi.x;
         AppConfig::ROI_y = cvRoi.y;
         AppConfig::ROI_width = cvRoi.width;
         AppConfig::ROI_height = cvRoi.height;
         AppConfig::ValidROI = true;
-        AppConfig::writeConfig();
     }
+    else
+    {
+        AppConfig::ROI_x_2 = cvRoi.x;
+        AppConfig::ROI_y_2 = cvRoi.y;
+        AppConfig::ROI_width_2 = cvRoi.width;
+        AppConfig::ROI_height_2 = cvRoi.height;
+        AppConfig::ValidROI_2 = true;
+    }
+    AppConfig::writeConfig();
 }
 
 // 点击【清除区域】
@@ -604,12 +663,24 @@ void mainwindow::onBtnClearRoiClicked()
     ui->btnSelectRoi->setEnabled(true);
     ui->btnClearRoi->setEnabled(false);
 
+    if (flagCamear == true)
+    {
+        AppConfig::ROI_x = 0;
+        AppConfig::ROI_y = 0;
+        AppConfig::ROI_width = 0;
+        AppConfig::ROI_height = 0;
+        AppConfig::ValidROI = false;
+    }
+    else
+    {
+        AppConfig::ROI_x_2 = 0;
+        AppConfig::ROI_y_2 = 0;
+        AppConfig::ROI_width_2 = 0;
+        AppConfig::ROI_height_2 = 0;
+        AppConfig::ValidROI_2 = false;
+    }
     
-    AppConfig::ROI_x = 0;
-    AppConfig::ROI_y = 0;
-    AppConfig::ROI_width = 0;
-    AppConfig::ROI_height = 0;
-    AppConfig::ValidROI = false;
+    
     AppConfig::writeConfig();
     
 
@@ -618,23 +689,153 @@ void mainwindow::onBtnClearRoiClicked()
 
 void mainwindow::setROI()
 {
-    bool valid = AppConfig::ValidROI;
-    double x = AppConfig::ROI_x;
-    double y = AppConfig::ROI_y;
-    double width = AppConfig::ROI_width;
-    double height = AppConfig::ROI_height;
-    if (valid == true && width > 0 && height > 0)
+    if (flagCamear == true)//第一个相机
     {
-        cv::Rect savedRoi(x, y, width, height);
-        m_cameraThread->setROI(savedRoi);
-        m_videoThread->setROI(savedRoi);
+        bool valid = AppConfig::ValidROI;
+        double x = AppConfig::ROI_x;
+        double y = AppConfig::ROI_y;
+        double width = AppConfig::ROI_width;
+        double height = AppConfig::ROI_height;
+        if (valid == true && width > 0 && height > 0)
+        {
+            cv::Rect savedRoi(x, y, width, height);
+            m_cameraThread->setROI(savedRoi);
+            m_videoThread->setROI(savedRoi);//视频回放默认和相机一相同配置
 
-        m_glWidget->setStaticROI(QRect(x, y, width, height));
-
-        // 3. 更新按钮状态
-        ui->btnSelectRoi->setEnabled(false);
-        ui->btnClearRoi->setEnabled(true);
-
-        ui->statusBar->showMessage("已自动加载 ROI 配置");
+            m_glWidget->setStaticROI(QRect(x, y, width, height));
+        }
     }
+    else//第二个相机
+    {
+        bool valid = AppConfig::ValidROI_2;
+        double x = AppConfig::ROI_x_2;
+        double y = AppConfig::ROI_y_2;
+        double width = AppConfig::ROI_width_2;
+        double height = AppConfig::ROI_height_2;
+        if (valid == true && width > 0 && height > 0)
+        {
+            cv::Rect savedRoi(x, y, width, height);
+            m_cameraThread->setROI(savedRoi);
+
+            m_glWidget->setStaticROI(QRect(x, y, width, height));
+        }
+    }
+    // 3. 更新按钮状态
+    ui->btnSelectRoi->setEnabled(false);
+    ui->btnClearRoi->setEnabled(true);
+
+    ui->statusBar->showMessage("已自动加载 ROI 配置");
+}
+
+void mainwindow::onMileageConnected()
+{
+    ui->textBrowser->append("百里标服务器连接成功");
+}
+
+void mainwindow::onMileageDisconnected()
+{
+    ui->textBrowser->append("百里标服务器连接断开");
+}
+
+void mainwindow::onMileageError(const QString& error)
+{
+    ui->textBrowser->append("百里标服务器连接错误");
+}
+
+void mainwindow::onMileageInfoReceived(const MileageInfo& info)
+{
+    //更新里程？
+}
+
+void mainwindow::onBtnConnectMileageClicked()
+{
+    QString ip = AppConfig::MileageServerIP;
+    int port = AppConfig::MileageServerPort;
+    if (m_mileageClient->isConnected())
+    {
+        m_mileageClient->disconnectServer();
+        ui->btn_connectMileage->setText("连接主服务器");
+    }
+    else
+    {
+        m_mileageClient->connectServer(ip,port);
+        ui->btn_connectMileage->setText("断开主服务器");
+    }
+}
+
+void mainwindow::onMileageUpdated(const MileageStatus &status)//实时里程
+{
+    ui->lineEditStartMileage->setText(QString::number(status.currentMileage,'f',3)+"km");
+    ui->lineEditSpeed->setText(QString::number(status.speed,'f',3));
+    ui->directionCom->setCurrentIndex((status.direction == 1 ? 0 : 1));
+    QString dirType;
+    if (ui->upOrDownCom->currentIndex() == 0)
+        dirType = "上行";
+    else
+        dirType = "下行";
+    m_warningPoint->checkWarningPoint(status.currentMileage, dirType);
+}
+
+void mainwindow::autoConnectMileageServer()
+{
+    {
+        QString ip = AppConfig::MileageServerIP;
+        int port = AppConfig::MileageServerPort;
+        if (!ip.isEmpty() && port > 0) {
+            ui->textBrowser->append("正在自动连接主服务器...");
+            m_mileageClient->connectServer(ip, port);
+            m_encoder->setTcpClient(m_mileageClient);
+            ui->btn_connectMileage->setText("断开主服务器");
+        }
+    }
+}
+
+void mainwindow::autoConnectSerialPort()
+{
+    if (AppConfig::AutoConnectSerialPort)
+    {
+        QString portName = AppConfig::SerialPortName;
+        int baudRate = AppConfig::SerialBaudRate;
+
+        if (!portName.isEmpty())
+        {
+            if(m_port->openPort(portName,baudRate))
+            {
+                ui->textBrowser->append(QString("串口%1连接成功").arg(portName));
+                m_encoder->setSerialComm(m_port);
+            }
+            else
+            {
+                ui->textBrowser->append(QString("串口%1连接失败").arg(portName));
+            }
+        }
+    }
+}
+
+void mainwindow::onWarningTriggered(const WarningPoint& ponit, double distance)
+{
+    QString message = QString("前方30米存在支撑臂碰撞风险，请收起支撑臂后通过！");
+    //模态
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("碰撞风险预警");
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.setText(message);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+
+    msgBox.exec();
+}
+
+void mainwindow::onBtnPackClicked()
+{
+    ui->statusBar->showMessage("正在打包数据，请稍候...");
+
+    // 为了防止界面卡顿，最好是异步的，但为了保证数据完整性，
+    // 在这里直接调用可能会卡几百毫秒（取决于文件大小）。
+    // 如果文件很大，建议把 packCurrentSession 扔到 QtConcurrent::run 里跑。
+
+    // 这里演示直接调用（简单直接）：
+    ReportWriter::instance()->packCurrentSession();
+
+    ui->statusBar->showMessage("数据打包完成！", 5000);
 }

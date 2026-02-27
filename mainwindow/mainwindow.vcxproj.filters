@@ -64,6 +64,21 @@
     <ClCompile Include="reportwriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WarningPointMgr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MileageSharedMemory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SerialPortComm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hectometerClient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EncoderMileageMgr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="cameraThread.h">
@@ -87,6 +102,18 @@
     <QtMoc Include="reportwriter.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="WarningPointMgr.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="SerialPortComm.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="hectometerClient.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="EncoderMileageMgr.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HCNetSDK.h">
@@ -96,6 +123,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AppConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MileageSharedMemory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

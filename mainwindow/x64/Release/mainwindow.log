@@ -1,9 +1,11 @@
 ﻿   Qt/MSBuild: 3.4.1.0
    Qt: 5.9.0
-  AppConfig.cpp
-  main.cpp
   mainwindow.cpp
-  reportwriter.cpp
-F:\hmy\mainwindow\mainwindow\HCNetSDK.h(41172,1): warning C4010: 单行注释包含行继续符 (编译源文件 mainwindow.cpp)
-F:\hmy\mainwindow\mainwindow\HCNetSDK.h(41172,1): warning C4010: 单行注释包含行继续符 (编译源文件 main.cpp)
+F:\hmy\mainwindow\mainwindow\HCNetSDK.h(41172,1): warning C4010: 单行注释包含行继续符
+F:\hmy\mainwindow\mainwindow\mainwindow.cpp(377,9): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+F:\hmy\mainwindow\mainwindow\mainwindow.cpp(378,9): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+F:\hmy\mainwindow\mainwindow\mainwindow.cpp(379,9): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+F:\hmy\mainwindow\mainwindow\mainwindow.cpp(404,9): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+F:\hmy\mainwindow\mainwindow\mainwindow.cpp(405,9): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+F:\hmy\mainwindow\mainwindow\mainwindow.cpp(406,9): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   mainwindow.vcxproj -> F:\hmy\mainwindow\x64\Release\mainwindow.exe
